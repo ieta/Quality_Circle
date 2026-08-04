@@ -39,9 +39,8 @@ export const Dashboard: React.FC<DashboardProps> = ({ evaluations, targetYearMon
         useCORS: true, 
         backgroundColor: '#ffffff',
         scrollY: 0,
-        windowY: 0,
         logging: false
-      });
+      } as any);
       const imgData = canvas.toDataURL('image/png');
       
       const pdf = new jsPDF('p', 'mm', 'a4');
@@ -78,9 +77,8 @@ export const Dashboard: React.FC<DashboardProps> = ({ evaluations, targetYearMon
         useCORS: true, 
         backgroundColor: '#ffffff',
         scrollY: 0,
-        windowY: 0,
         logging: false
-      });
+      } as any);
       const imgData = canvas.toDataURL('image/png');
       
       const pdf = new jsPDF('p', 'mm', 'a4');
