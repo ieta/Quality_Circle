@@ -37,8 +37,8 @@ export const CircleManager: React.FC<CircleManagerProps> = ({ circles, onUpdateC
   };
 
   return (
-    <div className="bg-slate-900 border border-slate-800 rounded-2xl p-6 shadow-xl max-w-4xl mx-auto">
-      <div className="flex items-center justify-between mb-6 pb-4 border-b border-slate-800">
+    <div className="glass-card rounded-2xl p-6 shadow-xl max-w-4xl mx-auto animate-fade-in-up">
+      <div className="flex items-center justify-between mb-6 pb-4 border-b border-white/10">
         <div className="flex items-center space-x-3">
           <div className="p-2.5 bg-indigo-500/10 text-indigo-400 rounded-xl border border-indigo-500/20">
             <Users className="w-6 h-6" />
@@ -51,7 +51,7 @@ export const CircleManager: React.FC<CircleManagerProps> = ({ circles, onUpdateC
 
         <button
           onClick={handleSave}
-          className="flex items-center space-x-2 bg-indigo-600 hover:bg-indigo-500 text-white font-medium px-4 py-2.5 rounded-xl transition-all shadow-lg shadow-indigo-600/25 active:scale-95 cursor-pointer"
+          className="flex items-center space-x-2 bg-gradient-to-r from-indigo-500 to-purple-500 hover:from-indigo-400 hover:to-purple-400 text-white font-medium px-4 py-2.5 rounded-xl transition-all shadow-lg shadow-indigo-500/25 active:scale-95 cursor-pointer transform hover:-translate-y-0.5"
         >
           <Save className="w-4 h-4" />
           <span>설정 저장하기</span>
@@ -59,7 +59,7 @@ export const CircleManager: React.FC<CircleManagerProps> = ({ circles, onUpdateC
       </div>
 
       {savedMsg && (
-        <div className="mb-6 p-4 bg-emerald-500/10 border border-emerald-500/30 rounded-xl text-emerald-400 text-sm flex items-center space-x-2">
+        <div className="mb-6 p-4 bg-emerald-500/20 border border-emerald-500/50 backdrop-blur-sm shadow-[0_0_15px_rgba(16,185,129,0.2)] rounded-xl text-emerald-300 text-sm flex items-center space-x-2">
           <Info className="w-4 h-4" />
           <span>분임조 인원수 정보가 성공적으로 저장되었습니다. 대시보드 점수 산출에 적용됩니다.</span>
         </div>
@@ -69,10 +69,10 @@ export const CircleManager: React.FC<CircleManagerProps> = ({ circles, onUpdateC
         {list.map((circle) => (
           <div 
             key={circle.id}
-            className="bg-slate-950/60 border border-slate-800 rounded-xl p-5 hover:border-slate-700 transition-colors flex flex-col md:flex-row md:items-center justify-between gap-4"
+            className="bg-white/5 border border-white/5 hover:border-white/10 rounded-xl p-5 transition-all flex flex-col md:flex-row md:items-center justify-between gap-4 group hover:shadow-[0_0_15px_rgba(255,255,255,0.05)] transform hover:scale-[1.01]"
           >
             <div className="flex items-center space-x-4 min-w-[160px]">
-              <div className="w-10 h-10 rounded-xl bg-slate-800 flex items-center justify-center font-bold text-slate-200 border border-slate-700">
+              <div className="w-10 h-10 rounded-xl bg-white/10 flex items-center justify-center font-bold text-slate-200 border border-white/10 shadow-sm group-hover:bg-indigo-500/20 group-hover:text-indigo-300 group-hover:border-indigo-400/50 transition-colors">
                 {circle.name[0]}
               </div>
               <div>
@@ -89,7 +89,7 @@ export const CircleManager: React.FC<CircleManagerProps> = ({ circles, onUpdateC
                   min="1"
                   value={circle.membersCount}
                   onChange={(e) => handleMemberCountChange(circle.id, parseInt(e.target.value) || 1)}
-                  className="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-slate-100 font-semibold focus:outline-none focus:border-indigo-500 text-center"
+                  className="w-full bg-black/20 backdrop-blur-sm border border-white/10 rounded-lg px-3 py-2 text-slate-100 font-semibold focus:outline-none focus:border-indigo-400 focus:ring-1 focus:ring-indigo-400 text-center shadow-inner transition-all"
                 />
               </div>
 
@@ -100,7 +100,7 @@ export const CircleManager: React.FC<CircleManagerProps> = ({ circles, onUpdateC
                   value={circle.leaderName}
                   onChange={(e) => handleLeaderChange(circle.id, e.target.value)}
                   placeholder="조장 이름"
-                  className="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-slate-100 focus:outline-none focus:border-indigo-500"
+                  className="w-full bg-black/20 backdrop-blur-sm border border-white/10 rounded-lg px-3 py-2 text-slate-100 focus:outline-none focus:border-indigo-400 focus:ring-1 focus:ring-indigo-400 shadow-inner transition-all"
                 />
               </div>
 
@@ -111,7 +111,7 @@ export const CircleManager: React.FC<CircleManagerProps> = ({ circles, onUpdateC
                   value={circle.note || ''}
                   onChange={(e) => handleNoteChange(circle.id, e.target.value)}
                   placeholder="예: 보전동, 현장공사 등"
-                  className="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-slate-100 focus:outline-none focus:border-indigo-500"
+                  className="w-full bg-black/20 backdrop-blur-sm border border-white/10 rounded-lg px-3 py-2 text-slate-100 focus:outline-none focus:border-indigo-400 focus:ring-1 focus:ring-indigo-400 shadow-inner transition-all"
                 />
               </div>
             </div>

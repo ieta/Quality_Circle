@@ -264,7 +264,7 @@ export const ExcelImporter: React.FC<ExcelImporterProps> = ({
   };
 
   return (
-    <div className="bg-slate-900 border border-slate-800 rounded-xl p-6 shadow-xl mb-8">
+    <div className="glass-card rounded-2xl p-6 shadow-xl mb-8 animate-fade-in-up">
       <div className="flex items-center space-x-3 mb-4">
         <div className="p-2 bg-indigo-500/20 text-indigo-400 rounded-lg">
           <FileSpreadsheet className="w-6 h-6" />
@@ -276,7 +276,7 @@ export const ExcelImporter: React.FC<ExcelImporterProps> = ({
       </div>
 
       {errorMsg && (
-        <div className="mb-4 p-3 bg-rose-500/10 border border-rose-500/30 rounded-lg flex items-center space-x-2 text-rose-400 text-sm">
+        <div className="mb-4 p-3 bg-rose-500/20 border border-rose-500/50 backdrop-blur-sm shadow-[0_0_15px_rgba(244,63,94,0.2)] rounded-lg flex items-center space-x-2 text-rose-200 text-sm">
           <AlertCircle className="w-4 h-4 shrink-0" />
           <span>{errorMsg}</span>
         </div>
@@ -288,10 +288,10 @@ export const ExcelImporter: React.FC<ExcelImporterProps> = ({
           onDragOver={(e) => { e.preventDefault(); setIsProposalDragging(true); }}
           onDragLeave={() => setIsProposalDragging(false)}
           onDrop={handleProposalDrop}
-          className={`border-2 border-dashed transition-all rounded-xl p-5 text-center relative cursor-pointer ${
+          className={`border-2 border-dashed transition-all duration-300 rounded-xl p-5 text-center relative cursor-pointer group ${
             isProposalDragging 
-              ? 'border-indigo-400 bg-indigo-500/10 scale-[1.01]' 
-              : 'border-slate-700 hover:border-indigo-500/50 bg-slate-950/40'
+              ? 'border-indigo-400 bg-indigo-500/20 scale-[1.02] shadow-[0_0_20px_rgba(99,102,241,0.2)]' 
+              : 'border-white/10 hover:border-indigo-400/50 bg-white/5 backdrop-blur-sm hover:bg-white/10 shadow-inner'
           }`}
         >
           <input
@@ -307,7 +307,7 @@ export const ExcelImporter: React.FC<ExcelImporterProps> = ({
           />
           
           <div className="relative z-10 pointer-events-none">
-            <Upload className="w-8 h-8 text-indigo-400 mx-auto mb-2" />
+            <Upload className="w-8 h-8 text-indigo-400 mx-auto mb-2 transform group-hover:-translate-y-1 transition-transform duration-300" />
             <span className="text-sm font-semibold text-slate-200 block">1. 제안실적 엑셀 업로드</span>
             <span className="text-xs text-slate-400 mt-1 block">파일 선택 또는 드래그 앤 드롭으로 가져오기</span>
           </div>
@@ -325,10 +325,10 @@ export const ExcelImporter: React.FC<ExcelImporterProps> = ({
           onDragOver={(e) => { e.preventDefault(); setIsMeetingDragging(true); }}
           onDragLeave={() => setIsMeetingDragging(false)}
           onDrop={handleMeetingDrop}
-          className={`border-2 border-dashed transition-all rounded-xl p-5 text-center relative cursor-pointer ${
+          className={`border-2 border-dashed transition-all duration-300 rounded-xl p-5 text-center relative cursor-pointer group ${
             isMeetingDragging 
-              ? 'border-cyan-400 bg-cyan-500/10 scale-[1.01]' 
-              : 'border-slate-700 hover:border-indigo-500/50 bg-slate-950/40'
+              ? 'border-cyan-400 bg-cyan-500/20 scale-[1.02] shadow-[0_0_20px_rgba(6,182,212,0.2)]' 
+              : 'border-white/10 hover:border-cyan-400/50 bg-white/5 backdrop-blur-sm hover:bg-white/10 shadow-inner'
           }`}
         >
           <input
@@ -344,7 +344,7 @@ export const ExcelImporter: React.FC<ExcelImporterProps> = ({
           />
 
           <div className="relative z-10 pointer-events-none">
-            <Upload className="w-8 h-8 text-cyan-400 mx-auto mb-2" />
+            <Upload className="w-8 h-8 text-cyan-400 mx-auto mb-2 transform group-hover:-translate-y-1 transition-transform duration-300" />
             <span className="text-sm font-semibold text-slate-200 block">2. 회의록 엑셀 업로드</span>
             <span className="text-xs text-slate-400 mt-1 block">파일 선택 또는 드래그 앤 드롭으로 가져오기</span>
           </div>

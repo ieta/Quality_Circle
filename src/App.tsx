@@ -8,10 +8,10 @@ import { ExcelImporter } from './components/ExcelImporter';
 import { LayoutDashboard, Edit3, UserCog, Download, Upload, Calendar } from 'lucide-react';
 
 const DEFAULT_CIRCLES: CircleInfo[] = [
-  { id: '1', name: '금메달', membersCount: 10, leaderName: '박성욱' },
-  { id: '2', name: '한마음', membersCount: 10, leaderName: '박민규' },
-  { id: '3', name: '독수리', membersCount: 10, leaderName: '임인관' },
-  { id: '4', name: '아리울', membersCount: 10, leaderName: '이대호' },
+  { id: '1', name: '금메달', membersCount: 4, leaderName: '박성욱' },
+  { id: '2', name: '한마음', membersCount: 4, leaderName: '박민규' },
+  { id: '3', name: '독수리', membersCount: 4, leaderName: '임인관' },
+  { id: '4', name: '아리울', membersCount: 4, leaderName: '이대호' },
   { id: '5', name: '새만금', membersCount: 10, leaderName: '김기홍', note: '보전동, 현장공사 집계' },
 ];
 
@@ -219,37 +219,37 @@ export function App() {
   };
 
   return (
-    <div className="min-h-screen bg-slate-950 text-slate-100 flex flex-col font-sans">
+    <div className="min-h-screen text-slate-100 flex flex-col font-sans bg-[var(--bg-gradient)] selection:bg-indigo-500/30">
       {/* 헤더 바 */}
-      <header className="bg-slate-900 border-b border-slate-800">
+      <header className="glass-panel border-b-0 border-white/5 sticky top-0 z-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
           <div className="flex items-center space-x-3">
-            <h1 className="text-xl font-bold tracking-tight text-white">분임조 평가 및 집계 시스템</h1>
+            <h1 className="text-xl font-bold tracking-tight bg-gradient-to-r from-indigo-400 to-purple-400 bg-clip-text text-transparent drop-shadow-sm">분임조 평가 및 집계 시스템</h1>
           </div>
 
           {/* 연월 선택 및 액션 버튼 */}
           <div className="flex items-center space-x-3 relative z-10">
-            <div className="flex items-center bg-slate-950 border border-slate-700 hover:border-indigo-500 rounded-xl px-3 py-1.5 space-x-2 text-xs transition-colors">
-              <Calendar className="w-4 h-4 text-indigo-400 shrink-0" />
+            <div className="flex items-center bg-white/5 border border-white/10 hover:border-indigo-400/50 rounded-xl px-3 py-1.5 space-x-2 text-xs transition-all duration-300 shadow-sm backdrop-blur-sm group">
+              <Calendar className="w-4 h-4 text-indigo-400 shrink-0 group-hover:text-indigo-300 transition-colors" />
               <input
                 type="month"
                 value={targetYearMonth}
                 onChange={(e) => setTargetYearMonth(e.target.value)}
-                className="bg-transparent text-slate-100 font-bold focus:outline-none cursor-pointer scheme-dark"
+                className="bg-transparent text-slate-100 font-medium focus:outline-none cursor-pointer scheme-dark"
               />
             </div>
 
             <button
               onClick={handleExportJSON}
               title="데이터 백업 내보내기"
-              className="p-2 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-xl transition-colors cursor-pointer"
+              className="p-2 bg-white/5 hover:bg-white/10 border border-white/10 text-slate-300 hover:text-white rounded-xl transition-all duration-300 shadow-sm cursor-pointer hover:shadow-indigo-500/20"
             >
               <Download className="w-4 h-4" />
             </button>
 
             <label
               title="백업 복구 불러오기"
-              className="p-2 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-xl transition-colors cursor-pointer"
+              className="p-2 bg-white/5 hover:bg-white/10 border border-white/10 text-slate-300 hover:text-white rounded-xl transition-all duration-300 shadow-sm cursor-pointer hover:shadow-indigo-500/20"
             >
               <Upload className="w-4 h-4" />
               <input type="file" accept=".json" onChange={handleImportJSON} className="hidden" />
@@ -259,14 +259,14 @@ export function App() {
       </header>
 
       {/* 서브 내비게이션 바 */}
-      <nav className="bg-slate-900/90 border-b border-slate-800/80 backdrop-blur-md sticky top-0 z-50">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex space-x-2 py-2.5">
+      <nav className="glass-panel border-t-0 border-b border-white/10 z-40 relative">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex space-x-2 py-3">
           <button
             onClick={() => setActiveTab('dashboard')}
-            className={`flex items-center space-x-2 px-4 py-2 rounded-xl text-sm font-bold transition-all cursor-pointer ${
+            className={`flex items-center space-x-2 px-5 py-2.5 rounded-xl text-sm font-semibold transition-all duration-300 cursor-pointer ${
               activeTab === 'dashboard'
-                ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-600/30'
-                : 'text-slate-400 hover:bg-slate-800 hover:text-slate-200'
+                ? 'bg-gradient-to-r from-indigo-500 to-purple-600 text-white shadow-lg shadow-indigo-500/25 border border-indigo-400/30'
+                : 'text-slate-400 hover:text-white hover:bg-white/5 border border-transparent'
             }`}
           >
             <LayoutDashboard className="w-4 h-4" />
@@ -275,10 +275,10 @@ export function App() {
 
           <button
             onClick={() => setActiveTab('input')}
-            className={`flex items-center space-x-2 px-4 py-2 rounded-xl text-sm font-bold transition-all cursor-pointer ${
+            className={`flex items-center space-x-2 px-5 py-2.5 rounded-xl text-sm font-semibold transition-all duration-300 cursor-pointer ${
               activeTab === 'input'
-                ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-600/30'
-                : 'text-slate-400 hover:bg-slate-800 hover:text-slate-200'
+                ? 'bg-gradient-to-r from-indigo-500 to-purple-600 text-white shadow-lg shadow-indigo-500/25 border border-indigo-400/30'
+                : 'text-slate-400 hover:text-white hover:bg-white/5 border border-transparent'
             }`}
           >
             <Edit3 className="w-4 h-4" />
@@ -287,10 +287,10 @@ export function App() {
 
           <button
             onClick={() => setActiveTab('manage')}
-            className={`flex items-center space-x-2 px-4 py-2 rounded-xl text-sm font-bold transition-all cursor-pointer ${
+            className={`flex items-center space-x-2 px-5 py-2.5 rounded-xl text-sm font-semibold transition-all duration-300 cursor-pointer ${
               activeTab === 'manage'
-                ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-600/30'
-                : 'text-slate-400 hover:bg-slate-800 hover:text-slate-200'
+                ? 'bg-gradient-to-r from-indigo-500 to-purple-600 text-white shadow-lg shadow-indigo-500/25 border border-indigo-400/30'
+                : 'text-slate-400 hover:text-white hover:bg-white/5 border border-transparent'
             }`}
           >
             <UserCog className="w-4 h-4" />
@@ -300,7 +300,7 @@ export function App() {
       </nav>
 
       {/* 본문 콘텐츠 영역 */}
-      <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8 animate-fade-in-up">
         {activeTab === 'dashboard' && (
           <Dashboard
             evaluations={currentMonthEvals}
@@ -333,7 +333,7 @@ export function App() {
         )}
       </main>
 
-      <footer className="border-t border-slate-900 bg-slate-950 py-6 text-center text-xs text-slate-500">
+      <footer className="mt-auto py-8 text-center text-xs text-slate-500/70 border-t border-white/5 glass-panel border-b-0">
         Quality Circle Evaluation Dashboard &copy; 2026. All rights reserved.
       </footer>
     </div>

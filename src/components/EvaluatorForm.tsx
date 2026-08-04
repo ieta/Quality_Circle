@@ -75,7 +75,7 @@ export const EvaluatorForm: React.FC<EvaluatorFormProps> = ({
   };
 
   return (
-    <div className="bg-slate-900 border border-slate-800 rounded-2xl p-6 shadow-xl max-w-5xl mx-auto">
+    <div className="glass-card rounded-2xl p-6 shadow-xl w-full animate-fade-in-up">
       {/* 분임조 선택 탭 */}
       <div className="flex flex-wrap gap-2 mb-6 pb-4 border-b border-slate-800">
         {circles.map(c => {
@@ -86,14 +86,14 @@ export const EvaluatorForm: React.FC<EvaluatorFormProps> = ({
             <button
               key={c.name}
               onClick={() => setSelectedCircle(c.name)}
-              className={`flex items-center space-x-2 px-4 py-2.5 rounded-xl font-bold transition-all cursor-pointer ${
+              className={`flex items-center space-x-2 px-4 py-2.5 rounded-xl font-bold transition-all duration-300 cursor-pointer ${
                 isSelected 
-                  ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-600/30 ring-2 ring-indigo-400'
-                  : 'bg-slate-950 text-slate-400 hover:bg-slate-800 hover:text-slate-200 border border-slate-800'
+                  ? 'bg-gradient-to-r from-indigo-500 to-purple-500 text-white shadow-lg shadow-indigo-500/30 ring-1 ring-white/20 transform scale-105'
+                  : 'bg-white/5 text-slate-400 hover:bg-white/10 hover:text-white border border-white/5'
               }`}
             >
               <span>{c.name} 분임조</span>
-              <span className={`text-xs px-2 py-0.5 rounded-full ${isSelected ? 'bg-indigo-700 text-indigo-100' : 'bg-slate-800 text-slate-300'}`}>
+              <span className={`text-xs px-2 py-0.5 rounded-full shadow-inner ${isSelected ? 'bg-white/20 text-white' : 'bg-black/20 text-slate-300'}`}>
                 {score}점
               </span>
             </button>
@@ -116,7 +116,7 @@ export const EvaluatorForm: React.FC<EvaluatorFormProps> = ({
 
         <button
           onClick={handleSave}
-          className="mt-4 md:mt-0 flex items-center space-x-2 bg-emerald-600 hover:bg-emerald-500 text-white font-bold px-5 py-2.5 rounded-xl transition-all shadow-lg shadow-emerald-600/25 active:scale-95 cursor-pointer"
+          className="mt-4 md:mt-0 flex items-center space-x-2 bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-400 hover:to-teal-400 text-white font-bold px-5 py-2.5 rounded-xl transition-all shadow-lg shadow-emerald-500/25 active:scale-95 cursor-pointer transform hover:-translate-y-0.5"
         >
           <Save className="w-4 h-4" />
           <span>전체 평가 저장</span>
@@ -134,8 +134,8 @@ export const EvaluatorForm: React.FC<EvaluatorFormProps> = ({
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
 
         {/* 1. 3정 5S */}
-        <div className="bg-slate-950/60 border border-slate-800 rounded-xl p-5">
-          <div className="flex items-center justify-between mb-4 border-b border-slate-800 pb-2">
+        <div className="bg-white/5 border border-white/5 hover:border-white/10 transition-colors rounded-xl p-5">
+          <div className="flex items-center justify-between mb-4 border-b border-white/10 pb-2">
             <h3 className="font-bold text-amber-400 text-sm uppercase tracking-wider">1. 3정 5S (20점)</h3>
             <span className="text-xs font-bold text-amber-400 bg-amber-400/10 px-2 py-0.5 rounded-md">
               {currentEval.scores.maintScore} / 20점
@@ -152,7 +152,7 @@ export const EvaluatorForm: React.FC<EvaluatorFormProps> = ({
                 min="0"
                 value={currentEval.scores.maintDefectCount}
                 onChange={(e) => handleInputChange('maintDefectCount', parseInt(e.target.value) || 0)}
-                className="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-slate-100 font-semibold focus:outline-none focus:border-amber-500"
+                className="w-full bg-black/20 backdrop-blur-sm border border-white/10 rounded-lg px-3 py-2 text-slate-100 font-semibold focus:outline-none focus:border-amber-400 focus:ring-1 focus:ring-amber-400 transition-all shadow-inner"
               />
               <span className="text-[11px] text-slate-500 mt-1 block">감점제: 20점 - (불합리 발견 건수 x 1점)</span>
             </div>
@@ -160,8 +160,8 @@ export const EvaluatorForm: React.FC<EvaluatorFormProps> = ({
         </div>
 
         {/* 2. 분임조 */}
-        <div className="bg-slate-950/60 border border-slate-800 rounded-xl p-5">
-          <div className="flex items-center justify-between mb-4 border-b border-slate-800 pb-2">
+        <div className="bg-white/5 border border-white/5 hover:border-white/10 transition-colors rounded-xl p-5">
+          <div className="flex items-center justify-between mb-4 border-b border-white/10 pb-2">
             <h3 className="font-bold text-cyan-400 text-sm uppercase tracking-wider">2. 분임조 (40점)</h3>
             <span className="text-xs font-bold text-cyan-400 bg-cyan-400/10 px-2 py-0.5 rounded-md">
               {(
@@ -184,7 +184,7 @@ export const EvaluatorForm: React.FC<EvaluatorFormProps> = ({
                 min="0"
                 value={currentEval.scores.meetingCount}
                 onChange={(e) => handleInputChange('meetingCount', parseInt(e.target.value) || 0)}
-                className="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-slate-100 font-semibold focus:outline-none focus:border-cyan-500"
+                className="w-full bg-black/20 backdrop-blur-sm border border-white/10 rounded-lg px-3 py-2 text-slate-100 font-semibold focus:outline-none focus:border-cyan-400 focus:ring-1 focus:ring-cyan-400 transition-all shadow-inner"
               />
               <span className="text-[11px] text-slate-500 mt-1 block">1점/회, 4회 이상 시 +1점 (최대 5점)</span>
             </div>
@@ -196,7 +196,7 @@ export const EvaluatorForm: React.FC<EvaluatorFormProps> = ({
               <select
                 value={currentEval.scores.prevThemeStep}
                 onChange={(e) => handleInputChange('prevThemeStep', e.target.value as ThemeStep)}
-                className="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-slate-100 focus:outline-none focus:border-cyan-500 text-xs"
+                className="w-full bg-black/20 backdrop-blur-sm border border-white/10 rounded-lg px-3 py-2 text-slate-100 focus:outline-none focus:border-cyan-400 focus:ring-1 focus:ring-cyan-400 transition-all text-xs shadow-inner"
               >
                 {THEME_STEPS.map(s => <option key={s} value={s}>{s}</option>)}
               </select>
@@ -209,7 +209,7 @@ export const EvaluatorForm: React.FC<EvaluatorFormProps> = ({
               <select
                 value={currentEval.scores.currThemeStep}
                 onChange={(e) => handleInputChange('currThemeStep', e.target.value as ThemeStep)}
-                className="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-slate-100 focus:outline-none focus:border-cyan-500 text-xs"
+                className="w-full bg-black/20 backdrop-blur-sm border border-white/10 rounded-lg px-3 py-2 text-slate-100 focus:outline-none focus:border-cyan-400 focus:ring-1 focus:ring-cyan-400 transition-all text-xs shadow-inner"
               >
                 {THEME_STEPS.map(s => <option key={s} value={s}>{s}</option>)}
               </select>
@@ -226,7 +226,7 @@ export const EvaluatorForm: React.FC<EvaluatorFormProps> = ({
                 max="100"
                 value={currentEval.scores.planAchievementRate}
                 onChange={(e) => handleInputChange('planAchievementRate', parseFloat(e.target.value) || 0)}
-                className="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-slate-100 font-semibold focus:outline-none focus:border-cyan-500"
+                className="w-full bg-black/20 backdrop-blur-sm border border-white/10 rounded-lg px-3 py-2 text-slate-100 font-semibold focus:outline-none focus:border-cyan-400 focus:ring-1 focus:ring-cyan-400 transition-all shadow-inner"
               />
             </div>
 
@@ -238,7 +238,7 @@ export const EvaluatorForm: React.FC<EvaluatorFormProps> = ({
                 <select
                   value={currentEval.scores.themeGrade}
                   onChange={(e) => handleInputChange('themeGrade', e.target.value as ThemeGrade)}
-                  className="w-full bg-slate-900 border border-slate-700 rounded-lg px-2 py-2 text-slate-100 focus:outline-none focus:border-cyan-500 text-xs"
+                  className="w-full bg-black/20 backdrop-blur-sm border border-white/10 rounded-lg px-2 py-2 text-slate-100 focus:outline-none focus:border-cyan-400 focus:ring-1 focus:ring-cyan-400 transition-all text-xs shadow-inner"
                 >
                   <option value="미완료">미완료 (0점)</option>
                   <option value="1급">1급 (5점)</option>
@@ -258,7 +258,7 @@ export const EvaluatorForm: React.FC<EvaluatorFormProps> = ({
                   min="0"
                   value={currentEval.scores.themeCumulativeCount}
                   onChange={(e) => handleInputChange('themeCumulativeCount', parseInt(e.target.value) || 0)}
-                  className="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-slate-100 font-semibold focus:outline-none focus:border-cyan-500"
+                  className="w-full bg-black/20 backdrop-blur-sm border border-white/10 rounded-lg px-3 py-2 text-slate-100 font-semibold focus:outline-none focus:border-cyan-400 focus:ring-1 focus:ring-cyan-400 transition-all shadow-inner"
                 />
               </div>
             </div>
@@ -266,8 +266,8 @@ export const EvaluatorForm: React.FC<EvaluatorFormProps> = ({
         </div>
 
         {/* 3. 제안 */}
-        <div className="bg-slate-950/60 border border-slate-800 rounded-xl p-5">
-          <div className="flex items-center justify-between mb-4 border-b border-slate-800 pb-2">
+        <div className="bg-white/5 border border-white/5 hover:border-white/10 transition-colors rounded-xl p-5">
+          <div className="flex items-center justify-between mb-4 border-b border-white/10 pb-2">
             <h3 className="font-bold text-emerald-400 text-sm uppercase tracking-wider">3. 제안 (40점)</h3>
             <span className="text-xs font-bold text-emerald-400 bg-emerald-400/10 px-2 py-0.5 rounded-md">
               {(
@@ -288,7 +288,7 @@ export const EvaluatorForm: React.FC<EvaluatorFormProps> = ({
                 min="0"
                 value={currentEval.scores.totalProposalCount}
                 onChange={(e) => handleInputChange('totalProposalCount', parseInt(e.target.value) || 0)}
-                className="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-slate-100 font-semibold focus:outline-none focus:border-emerald-500"
+                className="w-full bg-black/20 backdrop-blur-sm border border-white/10 rounded-lg px-3 py-2 text-slate-100 font-semibold focus:outline-none focus:border-emerald-400 focus:ring-1 focus:ring-emerald-400 transition-all shadow-inner"
               />
               <span className="text-[11px] text-emerald-400 mt-1 block">
                 인당 제안: {currentEval.scores.proposalPerPerson}건 → <span className="font-bold">{currentEval.scores.proposalScore}점</span>
@@ -304,7 +304,7 @@ export const EvaluatorForm: React.FC<EvaluatorFormProps> = ({
                 min="0"
                 value={currentEval.scores.totalUnreasonableCount}
                 onChange={(e) => handleInputChange('totalUnreasonableCount', parseInt(e.target.value) || 0)}
-                className="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-slate-100 font-semibold focus:outline-none focus:border-emerald-500"
+                className="w-full bg-black/20 backdrop-blur-sm border border-white/10 rounded-lg px-3 py-2 text-slate-100 font-semibold focus:outline-none focus:border-emerald-400 focus:ring-1 focus:ring-emerald-400 transition-all shadow-inner"
               />
               <span className="text-[11px] text-emerald-400 mt-1 block">
                 인당 적출: {currentEval.scores.unreasonablePerPerson}건 → <span className="font-bold">{currentEval.scores.unreasonableCountScore}점</span>
@@ -321,7 +321,7 @@ export const EvaluatorForm: React.FC<EvaluatorFormProps> = ({
                 max="100"
                 value={currentEval.scores.unreasonableResolveRate}
                 onChange={(e) => handleInputChange('unreasonableResolveRate', parseFloat(e.target.value) || 0)}
-                className="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-slate-100 font-semibold focus:outline-none focus:border-emerald-500"
+                className="w-full bg-black/20 backdrop-blur-sm border border-white/10 rounded-lg px-3 py-2 text-slate-100 font-semibold focus:outline-none focus:border-emerald-400 focus:ring-1 focus:ring-emerald-400 transition-all shadow-inner"
               />
               <span className="text-[11px] text-slate-500 mt-1 block">80% 이상: 10점, 60% 이상: 8점, 40% 이상: 4점</span>
             </div>
@@ -331,7 +331,7 @@ export const EvaluatorForm: React.FC<EvaluatorFormProps> = ({
       </div>
 
       {/* 총점 요약 바 */}
-      <div className="mt-8 bg-slate-950 border border-slate-800 rounded-xl p-4 flex items-center justify-between">
+      <div className="mt-8 bg-white/5 border border-white/10 backdrop-blur-md shadow-lg rounded-xl p-5 flex items-center justify-between">
         <div className="text-slate-300 font-semibold text-sm">
           [{selectedCircle} 분임조] {targetYearMonth} 총점 합계
         </div>

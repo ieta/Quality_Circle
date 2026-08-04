@@ -13,5 +13,6 @@ echo 개발 서버를 시작합니다 (http://localhost:5173)...
 echo 종료하려면 이 창을 닫거나 Ctrl+C를 누르세요.
 echo.
 
-npm run dev
+call npm install
+call npm run dev
 pause
