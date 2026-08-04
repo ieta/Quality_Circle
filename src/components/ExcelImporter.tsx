@@ -19,11 +19,11 @@ export const ExcelImporter: React.FC<ExcelImporterProps> = ({
   const [meetingStatus, setMeetingStatus] = useState<string | null>(null);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
 
-  // 1. 제안 실적 엑셀 처리
-  const handleProposalFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
+  const [isProposalDragging, setIsProposalDragging] = useState(false);
+  const [isMeetingDragging, setIsMeetingDragging] = useState(false);
 
+  // 공통 파일 읽기 함수 (File 객체 직접 받음)
+  const processProposalFile = (file: File) => {
     setErrorMsg(null);
     const reader = new FileReader();
     reader.onload = (evt) => {
@@ -93,7 +93,7 @@ export const ExcelImporter: React.FC<ExcelImporterProps> = ({
         }
 
         onImportProposalData(resultMap);
-        setProposalStatus(`제안실적 파싱 완료 (${processedRows}개 행 집계)`);
+        setProposalStatus(`제안실적 파싱 완료 (${file.name}, ${processedRows}개 행)`);
       } catch (err: any) {
         setErrorMsg('제안실적 엑셀 처리 중 오류가 발생했습니다: ' + err.message);
       }
@@ -101,11 +101,7 @@ export const ExcelImporter: React.FC<ExcelImporterProps> = ({
     reader.readAsBinaryString(file);
   };
 
-  // 2. 회의록 엑셀 처리
-  const handleMeetingFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
-
+  const processMeetingFile = (file: File) => {
     setErrorMsg(null);
     const reader = new FileReader();
     reader.onload = (evt) => {
@@ -161,14 +157,12 @@ export const ExcelImporter: React.FC<ExcelImporterProps> = ({
 
           if (targetCircle) {
             const rawDate = String(row[dateCol] || '').trim();
-            // 해당 평가월(targetYearMonth: YYYY-MM) 과 매칭되는지 체크
             const isMatchMonth = rawDate.includes(targetYearMonth);
 
             if (isMatchMonth) {
               circleData[targetCircle].meetingCount += 1;
             }
 
-            // 단계 파싱 (가장 최근 날짜의 단계 추출)
             const rawStepStr = String(row[stepCol] || '').trim();
             const matchedStep = THEME_STEPS.find(s => rawStepStr.includes(s) || s.includes(rawStepStr));
 
@@ -190,12 +184,28 @@ export const ExcelImporter: React.FC<ExcelImporterProps> = ({
         };
 
         onImportMeetingData(finalResult, targetYearMonth);
-        setMeetingStatus(`회의록 파싱 완료 (${targetYearMonth}월 회합 및 최신 단계 자동 파싱)`);
+        setMeetingStatus(`회의록 파싱 완료 (${file.name}, ${targetYearMonth}월 회합/단계 반영)`);
       } catch (err: any) {
         setErrorMsg('회의록 엑셀 처리 중 오류가 발생했습니다: ' + err.message);
       }
     };
     reader.readAsBinaryString(file);
+  };
+
+  // Drag & Drop 핸들러 (제안실적)
+  const handleProposalDrop = (e: React.DragEvent) => {
+    e.preventDefault();
+    setIsProposalDragging(false);
+    const file = e.dataTransfer.files?.[0];
+    if (file) processProposalFile(file);
+  };
+
+  // Drag & Drop 핸들러 (회의록)
+  const handleMeetingDrop = (e: React.DragEvent) => {
+    e.preventDefault();
+    setIsMeetingDragging(false);
+    const file = e.dataTransfer.files?.[0];
+    if (file) processMeetingFile(file);
   };
 
   return (
@@ -206,7 +216,7 @@ export const ExcelImporter: React.FC<ExcelImporterProps> = ({
         </div>
         <div>
           <h3 className="text-lg font-bold text-slate-100">엑셀 데이터 자동 파싱 ({targetYearMonth} 평가 기준)</h3>
-          <p className="text-sm text-slate-400">제안실적 및 회의록 엑셀(.xlsx)을 업로드하면 5개 분임조의 실적이 자동 계산됩니다.</p>
+          <p className="text-sm text-slate-400">제안실적 및 회의록 엑셀(.xlsx)을 업로드 또는 드래그하여 분임조 실적을 자동 파싱하세요.</p>
         </div>
       </div>
 
@@ -218,42 +228,68 @@ export const ExcelImporter: React.FC<ExcelImporterProps> = ({
       )}
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        {/* 1. 제안실적 엑셀 업로드 */}
-        <div className="border-2 border-dashed border-slate-700 hover:border-indigo-500/50 transition-colors rounded-xl p-4 bg-slate-950/40 text-center">
-          <label className="cursor-pointer block">
-            <Upload className="w-8 h-8 text-indigo-400 mx-auto mb-2" />
-            <span className="text-sm font-semibold text-slate-200 block">1. 제안실적 엑셀 업로드</span>
-            <span className="text-xs text-slate-500 mt-1 block">개인별 제안건수 및 불합리 적출 자동 반영</span>
-            <input
-              type="file"
-              accept=".xlsx, .xls, .csv"
-              onChange={handleProposalFileUpload}
-              className="hidden"
-            />
-          </label>
+        {/* 1. 제안실적 엑셀 업로드 존 */}
+        <div 
+          onDragOver={(e) => { e.preventDefault(); setIsProposalDragging(true); }}
+          onDragLeave={() => setIsProposalDragging(false)}
+          onDrop={handleProposalDrop}
+          className={`border-2 border-dashed transition-all rounded-xl p-5 text-center relative ${
+            isProposalDragging 
+              ? 'border-indigo-400 bg-indigo-500/10 scale-[1.01]' 
+              : 'border-slate-700 hover:border-indigo-500/50 bg-slate-950/40'
+          }`}
+        >
+          <input
+            id="proposal-file-input"
+            type="file"
+            accept=".xlsx, .xls, .csv"
+            onChange={(e) => {
+              const file = e.target.files?.[0];
+              if (file) processProposalFile(file);
+            }}
+            className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
+          />
+          
+          <Upload className="w-8 h-8 text-indigo-400 mx-auto mb-2" />
+          <span className="text-sm font-semibold text-slate-200 block">1. 제안실적 엑셀 업로드</span>
+          <span className="text-xs text-slate-400 mt-1 block">파일 선택 또는 드래그 앤 드롭으로 가져오기</span>
+
           {proposalStatus && (
-            <div className="mt-3 flex items-center justify-center space-x-1.5 text-emerald-400 text-xs font-medium">
+            <div className="mt-3 flex items-center justify-center space-x-1.5 text-emerald-400 text-xs font-medium relative z-20">
               <CheckCircle2 className="w-4 h-4" />
               <span>{proposalStatus}</span>
             </div>
           )}
         </div>
 
-        {/* 2. 회의록 엑셀 업로드 */}
-        <div className="border-2 border-dashed border-slate-700 hover:border-indigo-500/50 transition-colors rounded-xl p-4 bg-slate-950/40 text-center">
-          <label className="cursor-pointer block">
-            <Upload className="w-8 h-8 text-cyan-400 mx-auto mb-2" />
-            <span className="text-sm font-semibold text-slate-200 block">2. 회의록 엑셀 업로드</span>
-            <span className="text-xs text-slate-500 mt-1 block">당월 회합 횟수 및 최신 테마 진행단계 자동 추출</span>
-            <input
-              type="file"
-              accept=".xlsx, .xls, .csv"
-              onChange={handleMeetingFileUpload}
-              className="hidden"
-            />
-          </label>
+        {/* 2. 회의록 엑셀 업로드 존 */}
+        <div 
+          onDragOver={(e) => { e.preventDefault(); setIsMeetingDragging(true); }}
+          onDragLeave={() => setIsMeetingDragging(false)}
+          onDrop={handleMeetingDrop}
+          className={`border-2 border-dashed transition-all rounded-xl p-5 text-center relative ${
+            isMeetingDragging 
+              ? 'border-cyan-400 bg-cyan-500/10 scale-[1.01]' 
+              : 'border-slate-700 hover:border-indigo-500/50 bg-slate-950/40'
+          }`}
+        >
+          <input
+            id="meeting-file-input"
+            type="file"
+            accept=".xlsx, .xls, .csv"
+            onChange={(e) => {
+              const file = e.target.files?.[0];
+              if (file) processMeetingFile(file);
+            }}
+            className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
+          />
+
+          <Upload className="w-8 h-8 text-cyan-400 mx-auto mb-2" />
+          <span className="text-sm font-semibold text-slate-200 block">2. 회의록 엑셀 업로드</span>
+          <span className="text-xs text-slate-400 mt-1 block">파일 선택 또는 드래그 앤 드롭으로 가져오기</span>
+
           {meetingStatus && (
-            <div className="mt-3 flex items-center justify-center space-x-1.5 text-cyan-400 text-xs font-medium">
+            <div className="mt-3 flex items-center justify-center space-x-1.5 text-cyan-400 text-xs font-medium relative z-20">
               <CheckCircle2 className="w-4 h-4" />
               <span>{meetingStatus}</span>
             </div>
