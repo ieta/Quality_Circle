@@ -167,7 +167,7 @@ export function App() {
   };
 
   // 엑셀 파싱 데이터 반영 (회의록)
-  const handleImportMeetingData = (data: Record<CircleName, { meetingCount: number; latestStep?: any }>) => {
+  const handleImportMeetingData = (data: Record<CircleName, { meetingCount: number; earliestStep?: any; latestStep?: any }>) => {
     const updatedEvals = { ...currentMonthEvals };
 
     (Object.keys(data) as CircleName[]).forEach(name => {
@@ -177,6 +177,7 @@ export function App() {
       const recalculated = calculateTotalScore({
         ...current.scores,
         meetingCount: data[name].meetingCount,
+        prevThemeStep: data[name].earliestStep || current.scores.prevThemeStep,
         currThemeStep: data[name].latestStep || current.scores.currThemeStep
       }, circleInfo.membersCount);
 

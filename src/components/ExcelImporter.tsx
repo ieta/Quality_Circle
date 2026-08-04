@@ -166,15 +166,21 @@ export const ExcelImporter: React.FC<ExcelImporterProps> = ({
         let dateCol = headers.findIndex(h => h.includes('회합일자') || h.includes('일자') || h.includes('일시') || h.includes('날짜'));
         let stepCol = headers.findIndex(h => h.includes('현재단계') || h.includes('단계') || h.includes('진행단계'));
 
-        const circleData: Record<CircleName, { meetingCount: number; latestDate: string; latestStep?: ThemeStep }> = {
-          '금메달': { meetingCount: 0, latestDate: '' },
-          '한마음': { meetingCount: 0, latestDate: '' },
-          '독수리': { meetingCount: 0, latestDate: '' },
-          '아리울': { meetingCount: 0, latestDate: '' },
-          '새만금': { meetingCount: 0, latestDate: '' }
+        const circleData: Record<CircleName, { 
+          meetingCount: number; 
+          earliestDate: string; 
+          earliestStep?: ThemeStep;
+          latestDate: string; 
+          latestStep?: ThemeStep 
+        }> = {
+          '금메달': { meetingCount: 0, earliestDate: '', latestDate: '' },
+          '한마음': { meetingCount: 0, earliestDate: '', latestDate: '' },
+          '독수리': { meetingCount: 0, earliestDate: '', latestDate: '' },
+          '아리울': { meetingCount: 0, earliestDate: '', latestDate: '' },
+          '새만금': { meetingCount: 0, earliestDate: '', latestDate: '' }
         };
 
-        const targetParts = targetYearMonth.split('-'); // ["2026", "08"]
+        const targetParts = targetYearMonth.split('-');
         const targetYear = targetParts[0];
         const targetMonthNum = parseInt(targetParts[1] || '0');
 
@@ -193,7 +199,6 @@ export const ExcelImporter: React.FC<ExcelImporterProps> = ({
           if (targetCircle) {
             const rawDate = String(row[dateCol] || '').trim();
             
-            // 다양한 회합일자 매칭 (2026-08, 2026.08, 2026/08, 또는 2026-8 등)
             const isMatchMonth = 
               rawDate.includes(targetYearMonth) || 
               rawDate.includes(targetYearMonth.replace('-', '.')) ||
@@ -203,26 +208,34 @@ export const ExcelImporter: React.FC<ExcelImporterProps> = ({
             if (isMatchMonth) {
               circleData[targetCircle].meetingCount += 1;
               matchedMonthRows++;
-            }
 
-            const rawStepStr = String(row[stepCol] || '').trim();
-            const matchedStep = THEME_STEPS.find(s => rawStepStr.includes(s) || s.includes(rawStepStr));
+              const rawStepStr = String(row[stepCol] || '').trim();
+              const matchedStep = THEME_STEPS.find(s => rawStepStr.includes(s) || s.includes(rawStepStr));
 
-            if (matchedStep && (!circleData[targetCircle].latestDate || rawDate >= circleData[targetCircle].latestDate)) {
-              circleData[targetCircle].latestDate = rawDate;
-              circleData[targetCircle].latestStep = matchedStep;
+              if (matchedStep) {
+                // 1) 당월 가장 빠른 날짜의 단계 (시작 단계)
+                if (!circleData[targetCircle].earliestDate || rawDate <= circleData[targetCircle].earliestDate) {
+                  circleData[targetCircle].earliestDate = rawDate;
+                  circleData[targetCircle].earliestStep = matchedStep;
+                }
+                // 2) 당월 가장 최근 날짜의 단계 (종료 단계)
+                if (!circleData[targetCircle].latestDate || rawDate >= circleData[targetCircle].latestDate) {
+                  circleData[targetCircle].latestDate = rawDate;
+                  circleData[targetCircle].latestStep = matchedStep;
+                }
+              }
             }
 
             processedRows++;
           }
         }
 
-        const finalResult: Record<CircleName, { meetingCount: number; latestStep?: ThemeStep }> = {
-          '금메달': { meetingCount: circleData['금메달'].meetingCount, latestStep: circleData['금메달'].latestStep },
-          '한마음': { meetingCount: circleData['한마음'].meetingCount, latestStep: circleData['한마음'].latestStep },
-          '독수리': { meetingCount: circleData['독수리'].meetingCount, latestStep: circleData['독수리'].latestStep },
-          '아리울': { meetingCount: circleData['아리울'].meetingCount, latestStep: circleData['아리울'].latestStep },
-          '새만금': { meetingCount: circleData['새만금'].meetingCount, latestStep: circleData['새만금'].latestStep }
+        const finalResult: Record<CircleName, { meetingCount: number; earliestStep?: ThemeStep; latestStep?: ThemeStep }> = {
+          '금메달': { meetingCount: circleData['금메달'].meetingCount, earliestStep: circleData['금메달'].earliestStep, latestStep: circleData['금메달'].latestStep },
+          '한마음': { meetingCount: circleData['한마음'].meetingCount, earliestStep: circleData['한마음'].earliestStep, latestStep: circleData['한마음'].latestStep },
+          '독수리': { meetingCount: circleData['독수리'].meetingCount, earliestStep: circleData['독수리'].earliestStep, latestStep: circleData['독수리'].latestStep },
+          '아리울': { meetingCount: circleData['아리울'].meetingCount, earliestStep: circleData['아리울'].earliestStep, latestStep: circleData['아리울'].latestStep },
+          '새만금': { meetingCount: circleData['새만금'].meetingCount, earliestStep: circleData['새만금'].earliestStep, latestStep: circleData['새만금'].latestStep }
         };
 
         onImportMeetingData(finalResult, targetYearMonth);
