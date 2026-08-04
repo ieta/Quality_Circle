@@ -17,7 +17,7 @@ const DEFAULT_CIRCLES: CircleInfo[] = [
 
 export function App() {
   const [activeTab, setActiveTab] = useState<'dashboard' | 'input' | 'manage'>('dashboard');
-  const [targetYearMonth, setTargetYearMonth] = useState<string>('2026-08');
+  const [targetYearMonth, setTargetYearMonth] = useState<string>('2026-06');
 
   // 1. 분임조 기본정보 상태
   const [circles, setCircles] = useState<CircleInfo[]>(() => {
