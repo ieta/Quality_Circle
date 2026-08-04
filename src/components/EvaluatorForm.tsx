@@ -47,24 +47,25 @@ export const EvaluatorForm: React.FC<EvaluatorFormProps> = ({
   };
 
   const handleInputChange = (field: string, value: any) => {
-    setFormData(prev => {
-      const existing = prev[selectedCircle] || currentEval;
-      const updatedScoresRaw = {
-        ...existing.scores,
-        [field]: value
-      };
+    const existing = formData[selectedCircle] || currentEval;
+    const updatedScoresRaw = {
+      ...existing.scores,
+      [field]: value
+    };
 
-      const recalculated = calculateTotalScore(updatedScoresRaw, currentCircleInfo.membersCount);
+    const recalculated = calculateTotalScore(updatedScoresRaw, currentCircleInfo.membersCount);
 
-      return {
-        ...prev,
-        [selectedCircle]: {
-          ...existing,
-          yearMonth: targetYearMonth,
-          scores: recalculated
-        }
-      };
-    });
+    const newFormData = {
+      ...formData,
+      [selectedCircle]: {
+        ...existing,
+        yearMonth: targetYearMonth,
+        scores: recalculated
+      }
+    };
+
+    setFormData(newFormData);
+    onSaveEvaluations(newFormData);
   };
 
   const handleSave = () => {
