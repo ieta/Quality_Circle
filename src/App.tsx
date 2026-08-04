@@ -5,7 +5,7 @@ import { Dashboard } from './components/Dashboard';
 import { EvaluatorForm } from './components/EvaluatorForm';
 import { CircleManager } from './components/CircleManager';
 import { ExcelImporter } from './components/ExcelImporter';
-import { Trophy, LayoutDashboard, Edit3, UserCog, Download, Upload, Calendar } from 'lucide-react';
+import { LayoutDashboard, Edit3, UserCog, Download, Upload, Calendar } from 'lucide-react';
 
 const DEFAULT_CIRCLES: CircleInfo[] = [
   { id: '1', name: '금메달', membersCount: 10, leaderName: '박성욱' },
@@ -220,16 +220,10 @@ export function App() {
   return (
     <div className="min-h-screen bg-slate-950 text-slate-100 flex flex-col font-sans">
       {/* 헤더 바 */}
-      <header className="bg-slate-900 border-b border-slate-800 sticky top-0 z-50">
+      <header className="bg-slate-900 border-b border-slate-800">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
           <div className="flex items-center space-x-3">
-            <div className="p-2 bg-gradient-to-tr from-amber-500 to-indigo-600 rounded-xl text-white shadow-lg">
-              <Trophy className="w-6 h-6" />
-            </div>
-            <div>
-              <h1 className="text-xl font-black tracking-tight text-white">Quality Circle</h1>
-              <p className="text-xs text-indigo-400 font-medium">분임조 평가 및 집계 시스템</p>
-            </div>
+            <h1 className="text-xl font-bold tracking-tight text-white">분임조 평가 및 집계 시스템</h1>
           </div>
 
           {/* 연월 선택 및 액션 버튼 */}
@@ -264,8 +258,8 @@ export function App() {
       </header>
 
       {/* 서브 내비게이션 바 */}
-      <nav className="bg-slate-900/50 border-b border-slate-800/80 backdrop-blur-md sticky top-16 z-40">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex space-x-2 py-2">
+      <nav className="bg-slate-900/90 border-b border-slate-800/80 backdrop-blur-md sticky top-0 z-50">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex space-x-2 py-2.5">
           <button
             onClick={() => setActiveTab('dashboard')}
             className={`flex items-center space-x-2 px-4 py-2 rounded-xl text-sm font-bold transition-all cursor-pointer ${

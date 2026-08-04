@@ -32,10 +32,10 @@ export const Dashboard: React.FC<DashboardProps> = ({ evaluations, targetYearMon
 
     if (rank === 1 && score >= 70) {
       isFirstPlaceAward = true;
-      awardText = '🥇 1등 포상 대상 (최우수 분임조)';
+      awardText = '1등 포상 대상 (최우수 분임조)';
     } else if (rank === 2 && score >= 80) {
       isSecondPlaceAward = true;
-      awardText = '🥈 2등 포상 대상 (7만원 수령)';
+      awardText = '2등 포상 대상 (7만원 수령)';
     }
 
     return {
@@ -113,7 +113,7 @@ export const Dashboard: React.FC<DashboardProps> = ({ evaluations, targetYearMon
                   <span className="font-semibold text-amber-300">{first.awardText}</span>
                   {first.isFirstPlaceAward && (
                     <span className="bg-amber-500/20 text-amber-300 px-2.5 py-1 rounded-full border border-amber-500/30 font-bold">
-                      🏆 최우수 포상 확정 (70점 이상)
+                      최우수 포상 확정 (70점 이상)
                     </span>
                   )}
                 </div>
@@ -152,7 +152,7 @@ export const Dashboard: React.FC<DashboardProps> = ({ evaluations, targetYearMon
                   <span className="font-semibold text-cyan-300">{second.awardText}</span>
                   {second.isSecondPlaceAward ? (
                     <span className="bg-cyan-500/20 text-cyan-300 px-2.5 py-1 rounded-full border border-cyan-500/30 font-bold">
-                      🎁 7만원 포상 지급 대상 (80점 이상)
+                      7만원 포상 지급 대상 (80점 이상)
                     </span>
                   ) : (
                     <span className="text-slate-500">80점 미만으로 2등 포상 미지급</span>
