@@ -34,15 +34,16 @@ export const ExcelImporter: React.FC<ExcelImporterProps> = ({
         const ws = wb.Sheets[wsname];
         const rows = XLSX.utils.sheet_to_json<any[]>(ws, { header: 1 });
 
-        if (rows.length < 2) {
+        if (!rows || rows.length < 2) {
           setErrorMsg('제안실적 엑셀 데이터 내용이 부족합니다.');
           return;
         }
 
         // 헤더 행 찾기 ('분임조' 가 포함된 행)
         let headerIdx = -1;
-        for (let i = 0; i < Math.min(10, rows.length); i++) {
-          const rowStr = (rows[i] || []).map((c: any) => String(c || '')).join(' ');
+        for (let i = 0; i < Math.min(15, rows.length); i++) {
+          const rowArr = rows[i] || [];
+          const rowStr = rowArr.map((c: any) => String(c || '').trim()).join(' ');
           if (rowStr.includes('분임조')) {
             headerIdx = i;
             break;
@@ -50,14 +51,24 @@ export const ExcelImporter: React.FC<ExcelImporterProps> = ({
         }
 
         if (headerIdx === -1) {
-          setErrorMsg('엑셀에서 [분임조] 열을 찾을 수 없습니다.');
+          setErrorMsg('엑셀에서 [분임조] 열 헤더를 찾을 수 없습니다. (2행 구조 또는 첫 번째 시트를 확인해주세요)');
           return;
         }
 
-        const headers: string[] = rows[headerIdx].map((h: any) => String(h || '').trim());
-        const circleCol = headers.findIndex(h => h.includes('분임조'));
-        const proposalCol = headers.findIndex(h => h.includes('총 제안건수') || h.includes('제안건수') || h.includes('제안'));
-        const unreachCol = headers.findIndex(h => h.includes('불합리') || h.includes('적출'));
+        const headers: string[] = (rows[headerIdx] || []).map((h: any) => String(h || '').trim());
+        
+        // 열 매핑 (유동적 검색)
+        let circleCol = headers.findIndex(h => h.includes('분임조'));
+        let proposalCol = headers.findIndex(h => h.includes('총 제안건수') || h.includes('총제안건수') || (h.includes('제안') && h.includes('건수')));
+        let unreachCol = headers.findIndex(h => h.includes('불합리') || h.includes('적출'));
+
+        // 첫 번째 행(대분류)과 두 번째 행(열제목)이 나뉘어 있는 경우 보정
+        if (headerIdx > 0 && (circleCol === -1 || proposalCol === -1)) {
+          const prevHeaders = (rows[headerIdx - 1] || []).map((h: any) => String(h || '').trim());
+          if (circleCol === -1) circleCol = prevHeaders.findIndex(h => h.includes('분임조'));
+          if (proposalCol === -1) proposalCol = prevHeaders.findIndex(h => h.includes('제안'));
+          if (unreachCol === -1) unreachCol = prevHeaders.findIndex(h => h.includes('불합리'));
+        }
 
         if (circleCol === -1) {
           setErrorMsg('엑셀 내에서 [분임조] 열 위치를 지정할 수 없습니다.');
@@ -78,6 +89,8 @@ export const ExcelImporter: React.FC<ExcelImporterProps> = ({
           if (!row || row.length === 0) continue;
 
           const rawCircleName = String(row[circleCol] || '').trim();
+          if (!rawCircleName || rawCircleName.includes('합계') || rawCircleName.includes('평균')) continue;
+
           const targetCircle = (['금메달', '한마음', '독수리', '아리울', '새만금'] as CircleName[]).find(
             name => rawCircleName.includes(name)
           );
@@ -93,7 +106,7 @@ export const ExcelImporter: React.FC<ExcelImporterProps> = ({
         }
 
         onImportProposalData(resultMap);
-        setProposalStatus(`제안실적 파싱 완료 (${file.name}, ${processedRows}개 행)`);
+        setProposalStatus(`제안실적 파싱 완료 (${file.name}, ${processedRows}개 행 집계 완료)`);
       } catch (err: any) {
         setErrorMsg('제안실적 엑셀 처리 중 오류가 발생했습니다: ' + err.message);
       }
@@ -112,15 +125,16 @@ export const ExcelImporter: React.FC<ExcelImporterProps> = ({
         const ws = wb.Sheets[wsname];
         const rows = XLSX.utils.sheet_to_json<any[]>(ws, { header: 1 });
 
-        if (rows.length < 2) {
+        if (!rows || rows.length < 2) {
           setErrorMsg('회의록 엑셀 데이터 내용이 부족합니다.');
           return;
         }
 
         // 헤더 행 찾기 ('분임조' 포함 행)
         let headerIdx = -1;
-        for (let i = 0; i < Math.min(10, rows.length); i++) {
-          const rowStr = (rows[i] || []).map((c: any) => String(c || '')).join(' ');
+        for (let i = 0; i < Math.min(15, rows.length); i++) {
+          const rowArr = rows[i] || [];
+          const rowStr = rowArr.map((c: any) => String(c || '').trim()).join(' ');
           if (rowStr.includes('분임조')) {
             headerIdx = i;
             break;
@@ -128,14 +142,14 @@ export const ExcelImporter: React.FC<ExcelImporterProps> = ({
         }
 
         if (headerIdx === -1) {
-          setErrorMsg('회의록 엑셀에서 [분임조] 열을 찾을 수 없습니다.');
+          setErrorMsg('회의록 엑셀에서 [분임조] 열 헤더를 찾을 수 없습니다.');
           return;
         }
 
-        const headers: string[] = rows[headerIdx].map((h: any) => String(h || '').trim());
-        const circleCol = headers.findIndex(h => h.includes('분임조'));
-        const dateCol = headers.findIndex(h => h.includes('회합일자') || h.includes('일자') || h.includes('일시'));
-        const stepCol = headers.findIndex(h => h.includes('현재단계') || h.includes('단계'));
+        const headers: string[] = (rows[headerIdx] || []).map((h: any) => String(h || '').trim());
+        let circleCol = headers.findIndex(h => h.includes('분임조'));
+        let dateCol = headers.findIndex(h => h.includes('회합일자') || h.includes('일자') || h.includes('일시') || h.includes('날짜'));
+        let stepCol = headers.findIndex(h => h.includes('현재단계') || h.includes('단계') || h.includes('진행단계'));
 
         const circleData: Record<CircleName, { meetingCount: number; latestDate: string; latestStep?: ThemeStep }> = {
           '금메달': { meetingCount: 0, latestDate: '' },
@@ -145,10 +159,13 @@ export const ExcelImporter: React.FC<ExcelImporterProps> = ({
           '새만금': { meetingCount: 0, latestDate: '' }
         };
 
-        // 선택 년월 (예: 2026-08 또는 2026-8)
         const targetParts = targetYearMonth.split('-'); // ["2026", "08"]
+        const targetYear = targetParts[0];
+        const targetMonthNum = parseInt(targetParts[1] || '0');
 
         let processedRows = 0;
+        let matchedMonthRows = 0;
+
         for (let i = headerIdx + 1; i < rows.length; i++) {
           const row = rows[i];
           if (!row || row.length === 0) continue;
@@ -161,15 +178,16 @@ export const ExcelImporter: React.FC<ExcelImporterProps> = ({
           if (targetCircle) {
             const rawDate = String(row[dateCol] || '').trim();
             
-            // 날짜 비교 (YYYY-MM 또는 YYYY.MM 또는 YYYY/MM 지원)
+            // 다양한 회합일자 매칭 (2026-08, 2026.08, 2026/08, 또는 2026-8 등)
             const isMatchMonth = 
               rawDate.includes(targetYearMonth) || 
               rawDate.includes(targetYearMonth.replace('-', '.')) ||
               rawDate.includes(targetYearMonth.replace('-', '/')) ||
-              (targetParts.length === 2 && rawDate.includes(targetParts[0]) && rawDate.includes(String(parseInt(targetParts[1]))));
+              (rawDate.includes(targetYear) && (rawDate.includes(`-${targetMonthNum}-`) || rawDate.includes(`.${targetMonthNum}.`) || rawDate.includes(`/${targetMonthNum}/`)));
 
             if (isMatchMonth) {
               circleData[targetCircle].meetingCount += 1;
+              matchedMonthRows++;
             }
 
             const rawStepStr = String(row[stepCol] || '').trim();
@@ -193,7 +211,7 @@ export const ExcelImporter: React.FC<ExcelImporterProps> = ({
         };
 
         onImportMeetingData(finalResult, targetYearMonth);
-        setMeetingStatus(`회의록 파싱 완료 (${file.name}, ${targetYearMonth}월 회합/단계 반영)`);
+        setMeetingStatus(`회의록 파싱 완료 (${file.name}, 당월 회합 ${matchedMonthRows}건 집계)`);
       } catch (err: any) {
         setErrorMsg('회의록 엑셀 처리 중 오류가 발생했습니다: ' + err.message);
       }
