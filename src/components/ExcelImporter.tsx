@@ -39,49 +39,50 @@ export const ExcelImporter: React.FC<ExcelImporterProps> = ({
           return;
         }
 
-        // 헤더 행 찾기 ('분임조' 가 포함된 행)
+        // 헤더 행 찾기 ('사업장' 및 '분임조' 가 동시에 포함된 행 찾기)
         let headerIdx = -1;
-        for (let i = 0; i < Math.min(15, rows.length); i++) {
+        for (let i = 0; i < Math.min(10, rows.length); i++) {
           const rowArr = rows[i] || [];
           const rowStr = rowArr.map((c: any) => String(c || '').trim()).join(' ');
-          if (rowStr.includes('분임조')) {
+          if (rowStr.includes('분임조') && (rowStr.includes('사업장') || rowStr.includes('성명'))) {
             headerIdx = i;
             break;
           }
         }
 
+        // 만약 못 찾으면 단순히 '분임조' 포함 행 찾기
         if (headerIdx === -1) {
-          setErrorMsg('엑셀에서 [분임조] 열 헤더를 찾을 수 없습니다. (2행 구조 또는 첫 번째 시트를 확인해주세요)');
+          for (let i = 0; i < Math.min(10, rows.length); i++) {
+            const rowStr = (rows[i] || []).map((c: any) => String(c || '').trim()).join(' ');
+            if (rowStr.includes('분임조')) {
+              headerIdx = i;
+              break;
+            }
+          }
+        }
+
+        if (headerIdx === -1) {
+          setErrorMsg('엑셀에서 [분임조] 열 헤더를 찾을 수 없습니다.');
           return;
         }
 
-        // 1행과 2행의 열제목을 결합하여 완벽하게 찾기
-        const upperHeaders: string[] = headerIdx > 0 ? (rows[headerIdx - 1] || []).map((h: any) => String(h || '').trim()) : [];
         const headers: string[] = (rows[headerIdx] || []).map((h: any) => String(h || '').trim());
+        const upperHeaders: string[] = headerIdx > 0 ? (rows[headerIdx - 1] || []).map((h: any) => String(h || '').trim()) : [];
         
-        // 병합된 열제목 결합 (예: 1행 '종 제안건수' + 2행 '총 제안건수')
-        const combinedHeaders = headers.map((h, idx) => {
-          const upper = upperHeaders[idx] || '';
-          return `${upper} ${h}`.trim();
-        });
-
         // 1. '분임조' 열 위치 찾기
-        let circleCol = combinedHeaders.findIndex(h => h.includes('분임조'));
-        if (circleCol === -1) circleCol = headers.findIndex(h => h.includes('분임조'));
+        let circleCol = headers.findIndex(h => h.includes('분임조'));
+        if (circleCol === -1) circleCol = upperHeaders.findIndex(h => h.includes('분임조'));
 
-        // 2. '총 제안건수' 열 정확히 찾기 (우선순위 1: '총 제안건수' 정확한 포함, 우선순위 2: J열 근처 9번째 열)
-        let proposalCol = combinedHeaders.findIndex(h => h.includes('총 제안건수') || h.includes('총제안건수'));
-        if (proposalCol === -1) proposalCol = headers.findIndex(h => h.includes('총 제안건수') || h.includes('총제안건수'));
-        if (proposalCol === -1) proposalCol = combinedHeaders.findIndex(h => h.includes('제안건수'));
+        // 2. '총 제안건수' 열 정확히 찾기
+        let proposalCol = headers.findIndex(h => h.includes('총 제안건수') || h.includes('총제안건수'));
+        if (proposalCol === -1) proposalCol = upperHeaders.findIndex(h => h.includes('총 제안건수') || h.includes('총제안건수'));
         if (proposalCol === -1) proposalCol = headers.findIndex(h => h.includes('제안건수'));
-        if (proposalCol === -1) {
-          // J열 (인덱스 9) 디폴트 검사
-          if (headers[9] !== undefined) proposalCol = 9;
-        }
+        if (proposalCol === -1) proposalCol = upperHeaders.findIndex(h => h.includes('제안건수'));
+        if (proposalCol === -1) proposalCol = headers.findIndex(h => h.includes('제안'));
 
-        // 3. '불합리 적출' 건수 열 찾기
-        let unreachCol = combinedHeaders.findIndex(h => h.includes('불합리') || h.includes('적출'));
-        if (unreachCol === -1) unreachCol = headers.findIndex(h => h.includes('불합리') || h.includes('적출'));
+        // 3. '불합리' 열 찾기 (불합리 적출 건수)
+        let unreachCol = headers.findIndex(h => h.includes('불합리'));
+        if (unreachCol === -1) unreachCol = upperHeaders.findIndex(h => h.includes('불합리'));
 
         if (circleCol === -1) {
           setErrorMsg('엑셀에서 [분임조] 열 위치를 찾을 수 없습니다.');
@@ -111,7 +112,6 @@ export const ExcelImporter: React.FC<ExcelImporterProps> = ({
           );
 
           if (targetCircle) {
-            // 제안건수 읽기 ('총 제안건수' 열 우선)
             const rawP = proposalCol !== -1 ? row[proposalCol] : 0;
             const pVal = Number(String(rawP).replace(/[^0-9.]/g, '')) || 0;
             
@@ -125,7 +125,7 @@ export const ExcelImporter: React.FC<ExcelImporterProps> = ({
           }
         }
 
-        const colNameDetected = proposalCol !== -1 ? (headers[proposalCol] || combinedHeaders[proposalCol] || `${proposalCol}번째 열`) : '미인식';
+        const colNameDetected = proposalCol !== -1 ? headers[proposalCol] || '총 제안건수' : '미인식';
         onImportProposalData(resultMap);
         setProposalStatus(`제안실적 파싱 완료 (${file.name}, [${colNameDetected}] 열 적용, ${processedRows}명 집계, 총 제안 ${totalSumProposals}건)`);
       } catch (err: any) {
