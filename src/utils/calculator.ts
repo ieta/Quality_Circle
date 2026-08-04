@@ -35,10 +35,10 @@ export function calculateThemeProgress(prevStep: ThemeStep, currStep: ThemeStep)
 
   let stepsAdvanced = 0;
   if (currIdx >= prevIdx) {
-    stepsAdvanced = currIdx - prevIdx;
+    stepsAdvanced = currIdx - prevIdx + 1;
   } else {
     // 테마 종료 후 새로 시작된 경우 (순환)
-    stepsAdvanced = (10 - prevIdx) + currIdx;
+    stepsAdvanced = (10 - prevIdx) + currIdx + 1;
   }
 
   const score = Math.min(20, stepsAdvanced * 5);

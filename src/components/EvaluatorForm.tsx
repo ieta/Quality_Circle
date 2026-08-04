@@ -191,7 +191,7 @@ export const EvaluatorForm: React.FC<EvaluatorFormProps> = ({
 
             <div>
               <label className="block text-xs font-semibold text-slate-300 mb-1">
-                개선테마 전월 단계
+                개선테마 당월 시작 단계
               </label>
               <select
                 value={currentEval.scores.prevThemeStep}
@@ -204,7 +204,7 @@ export const EvaluatorForm: React.FC<EvaluatorFormProps> = ({
 
             <div>
               <label className="block text-xs font-semibold text-slate-300 mb-1">
-                개선테마 당월 단계 — <span className="text-cyan-400">{currentEval.scores.themeProgressScore}점 ({currentEval.scores.themeProgressSteps}단계 전진)</span>
+                개선테마 당월 종료 단계 — <span className="text-cyan-400">{currentEval.scores.themeProgressScore}점 ({currentEval.scores.themeProgressSteps}단계 진행)</span>
               </label>
               <select
                 value={currentEval.scores.currThemeStep}
