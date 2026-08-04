@@ -39,14 +39,25 @@ export const ExcelImporter: React.FC<ExcelImporterProps> = ({
           return;
         }
 
-        // 헤더 행 찾기 ('분임조' 포함 행)
+        // 헤더 행 찾기 ('분임조' 셀이 정확히 일치하는 행 우선, 없으면 포함하는 행)
+        // 주의: '분임조역할' 등 부분 포함 셀이 있는 상위 병합행을 잘못 고르지 않도록
+        // 정확히 일치하는 셀을 먼저 찾는다.
         let headerIdx = -1;
         for (let i = 0; i < Math.min(10, rows.length); i++) {
           const rowArr = rows[i] || [];
-          const rowStr = rowArr.map((c: any) => String(c || '').trim()).join(' ');
-          if (rowStr.includes('분임조')) {
+          if (rowArr.some((c: any) => String(c || '').trim() === '분임조')) {
             headerIdx = i;
             break;
+          }
+        }
+        if (headerIdx === -1) {
+          for (let i = 0; i < Math.min(10, rows.length); i++) {
+            const rowArr = rows[i] || [];
+            const rowStr = rowArr.map((c: any) => String(c || '').trim()).join(' ');
+            if (rowStr.includes('분임조')) {
+              headerIdx = i;
+              break;
+            }
           }
         }
 
@@ -54,9 +65,11 @@ export const ExcelImporter: React.FC<ExcelImporterProps> = ({
 
         const headers: string[] = (rows[headerIdx] || []).map((h: any) => String(h || '').trim());
         const upperHeaders: string[] = headerIdx > 0 ? (rows[headerIdx - 1] || []).map((h: any) => String(h || '').trim()) : [];
-        
-        // 1. '분임조' 열 위치 (D열 / 인덱스 3)
-        let circleCol = headers.findIndex(h => h.includes('분임조'));
+
+        // 1. '분임조' 열 위치 (D열 / 인덱스 3) - 정확히 일치하는 헤더 우선
+        let circleCol = headers.findIndex(h => h === '분임조');
+        if (circleCol === -1) circleCol = headers.findIndex(h => h.includes('분임조'));
+        if (circleCol === -1) circleCol = upperHeaders.findIndex(h => h === '분임조');
         if (circleCol === -1) circleCol = upperHeaders.findIndex(h => h.includes('분임조'));
         if (circleCol === -1) circleCol = 3; // 기본 D열
 

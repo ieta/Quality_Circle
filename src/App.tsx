@@ -209,7 +209,7 @@ export function App() {
         const parsed = JSON.parse(evt.target?.result as string);
         if (parsed.circles) setCircles(parsed.circles);
         if (parsed.evaluations) setEvaluations(parsed.evaluations);
-        alert('백업 데이터가成功적으로 복구되었습니다.');
+        alert('백업 데이터가 성공적으로 복구되었습니다.');
       } catch (err) {
         alert('올바른 백업 JSON 파일이 아닙니다.');
       }
