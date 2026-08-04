@@ -262,7 +262,7 @@ export const ExcelImporter: React.FC<ExcelImporterProps> = ({
           onDragOver={(e) => { e.preventDefault(); setIsProposalDragging(true); }}
           onDragLeave={() => setIsProposalDragging(false)}
           onDrop={handleProposalDrop}
-          className={`border-2 border-dashed transition-all rounded-xl p-5 text-center relative ${
+          className={`border-2 border-dashed transition-all rounded-xl p-5 text-center relative cursor-pointer ${
             isProposalDragging 
               ? 'border-indigo-400 bg-indigo-500/10 scale-[1.01]' 
               : 'border-slate-700 hover:border-indigo-500/50 bg-slate-950/40'
@@ -272,16 +272,19 @@ export const ExcelImporter: React.FC<ExcelImporterProps> = ({
             id="proposal-file-input"
             type="file"
             accept=".xlsx, .xls, .csv"
+            value=""
             onChange={(e) => {
               const file = e.target.files?.[0];
               if (file) processProposalFile(file);
             }}
-            className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
+            className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-30"
           />
           
-          <Upload className="w-8 h-8 text-indigo-400 mx-auto mb-2" />
-          <span className="text-sm font-semibold text-slate-200 block">1. 제안실적 엑셀 업로드</span>
-          <span className="text-xs text-slate-400 mt-1 block">파일 선택 또는 드래그 앤 드롭으로 가져오기</span>
+          <div className="relative z-10 pointer-events-none">
+            <Upload className="w-8 h-8 text-indigo-400 mx-auto mb-2" />
+            <span className="text-sm font-semibold text-slate-200 block">1. 제안실적 엑셀 업로드</span>
+            <span className="text-xs text-slate-400 mt-1 block">파일 선택 또는 드래그 앤 드롭으로 가져오기</span>
+          </div>
 
           {proposalStatus && (
             <div className="mt-3 flex items-center justify-center space-x-1.5 text-emerald-400 text-xs font-medium relative z-20">
@@ -296,7 +299,7 @@ export const ExcelImporter: React.FC<ExcelImporterProps> = ({
           onDragOver={(e) => { e.preventDefault(); setIsMeetingDragging(true); }}
           onDragLeave={() => setIsMeetingDragging(false)}
           onDrop={handleMeetingDrop}
-          className={`border-2 border-dashed transition-all rounded-xl p-5 text-center relative ${
+          className={`border-2 border-dashed transition-all rounded-xl p-5 text-center relative cursor-pointer ${
             isMeetingDragging 
               ? 'border-cyan-400 bg-cyan-500/10 scale-[1.01]' 
               : 'border-slate-700 hover:border-indigo-500/50 bg-slate-950/40'
@@ -306,16 +309,19 @@ export const ExcelImporter: React.FC<ExcelImporterProps> = ({
             id="meeting-file-input"
             type="file"
             accept=".xlsx, .xls, .csv"
+            value=""
             onChange={(e) => {
               const file = e.target.files?.[0];
               if (file) processMeetingFile(file);
             }}
-            className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
+            className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-30"
           />
 
-          <Upload className="w-8 h-8 text-cyan-400 mx-auto mb-2" />
-          <span className="text-sm font-semibold text-slate-200 block">2. 회의록 엑셀 업로드</span>
-          <span className="text-xs text-slate-400 mt-1 block">파일 선택 또는 드래그 앤 드롭으로 가져오기</span>
+          <div className="relative z-10 pointer-events-none">
+            <Upload className="w-8 h-8 text-cyan-400 mx-auto mb-2" />
+            <span className="text-sm font-semibold text-slate-200 block">2. 회의록 엑셀 업로드</span>
+            <span className="text-xs text-slate-400 mt-1 block">파일 선택 또는 드래그 앤 드롭으로 가져오기</span>
+          </div>
 
           {meetingStatus && (
             <div className="mt-3 flex items-center justify-center space-x-1.5 text-cyan-400 text-xs font-medium relative z-20">
