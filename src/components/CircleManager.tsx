@@ -13,15 +13,21 @@ export const CircleManager: React.FC<CircleManagerProps> = ({ circles, onUpdateC
 
   const handleMemberCountChange = (id: string, count: number) => {
     const val = Math.max(1, count);
-    setList(prev => prev.map(c => c.id === id ? { ...c, membersCount: val } : c));
+    const updated = list.map(c => c.id === id ? { ...c, membersCount: val } : c);
+    setList(updated);
+    onUpdateCircles(updated);
   };
 
   const handleLeaderChange = (id: string, leaderName: string) => {
-    setList(prev => prev.map(c => c.id === id ? { ...c, leaderName } : c));
+    const updated = list.map(c => c.id === id ? { ...c, leaderName } : c);
+    setList(updated);
+    onUpdateCircles(updated);
   };
 
   const handleNoteChange = (id: string, note: string) => {
-    setList(prev => prev.map(c => c.id === id ? { ...c, note } : c));
+    const updated = list.map(c => c.id === id ? { ...c, note } : c);
+    setList(updated);
+    onUpdateCircles(updated);
   };
 
   const handleSave = () => {
