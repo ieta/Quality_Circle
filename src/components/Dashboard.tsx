@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import type { CircleName, MonthlyCircleEvaluation, AwardStatus } from '../types';
-import { Trophy, Award, Medal, ChevronRight, BarChart3, PieChart as PieChartIcon } from 'lucide-react';
+import { Trophy, Award, Medal, ChevronRight, BarChart3 } from 'lucide-react';
 import { 
-  BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, Cell, 
+  BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, 
   RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis, Radar 
 } from 'recharts';
 

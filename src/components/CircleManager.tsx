@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import type { CircleInfo } from '../types';
-import { Users, Save, Plus, Trash2, Info } from 'lucide-react';
+import { Users, Save, Info } from 'lucide-react';
 
 interface CircleManagerProps {
   circles: CircleInfo[];
