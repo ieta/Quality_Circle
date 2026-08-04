@@ -227,14 +227,14 @@ export function App() {
           </div>
 
           {/* 연월 선택 및 액션 버튼 */}
-          <div className="flex items-center space-x-3">
-            <div className="flex items-center bg-slate-950 border border-slate-800 rounded-xl px-3 py-1.5 space-x-2 text-xs">
-              <Calendar className="w-4 h-4 text-slate-400" />
+          <div className="flex items-center space-x-3 relative z-10">
+            <div className="flex items-center bg-slate-950 border border-slate-700 hover:border-indigo-500 rounded-xl px-3 py-1.5 space-x-2 text-xs transition-colors">
+              <Calendar className="w-4 h-4 text-indigo-400 shrink-0" />
               <input
                 type="month"
                 value={targetYearMonth}
                 onChange={(e) => setTargetYearMonth(e.target.value)}
-                className="bg-transparent text-slate-200 font-bold focus:outline-none cursor-pointer"
+                className="bg-transparent text-slate-100 font-bold focus:outline-none cursor-pointer scheme-dark"
               />
             </div>
 
