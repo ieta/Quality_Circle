@@ -41,11 +41,18 @@ export const Dashboard: React.FC<DashboardProps> = ({ evaluations, targetYearMon
         scrollY: 0,
         logging: false,
         onclone: (clonedDoc: Document) => {
-          // html2canvas가 Tailwind v4의 oklch()나 현대적 CSS 변수를 분석하지 못해 나는 에러 방지
+          // html2canvas가 Tailwind v4의 전체 <style> 규칙 내 oklch()를 파싱하다가 발생시키는 오류 방지
+          const styleTags = clonedDoc.querySelectorAll('style');
+          styleTags.forEach((style: HTMLStyleElement) => {
+            if (style.innerHTML.includes('oklch')) {
+              // oklch 포함된 규칙 제거 또는 호환 가능 문자로 대체
+              style.innerHTML = style.innerHTML.replace(/oklch\([^)]+\)/g, '#6366f1');
+            }
+          });
+          
           const clonedEl = clonedDoc.getElementById('summary-pdf-template');
           if (clonedEl) {
             clonedEl.style.fontFamily = 'sans-serif';
-            // 복제본의 모든 요소에서 oklch/lab 등 지원되지 않는 색상 속성을 표준 RGB/Hex로 안전하게 대체
             const allElements = clonedEl.querySelectorAll('*');
             allElements.forEach((el: any) => {
               const computed = window.getComputedStyle(el);
@@ -100,6 +107,13 @@ export const Dashboard: React.FC<DashboardProps> = ({ evaluations, targetYearMon
         scrollY: 0,
         logging: false,
         onclone: (clonedDoc: Document) => {
+          const styleTags = clonedDoc.querySelectorAll('style');
+          styleTags.forEach((style: HTMLStyleElement) => {
+            if (style.innerHTML.includes('oklch')) {
+              style.innerHTML = style.innerHTML.replace(/oklch\([^)]+\)/g, '#6366f1');
+            }
+          });
+          
           const clonedEl = clonedDoc.getElementById('pdf-report-template');
           if (clonedEl) {
             clonedEl.style.fontFamily = 'sans-serif';
