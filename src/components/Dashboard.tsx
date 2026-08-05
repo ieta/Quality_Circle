@@ -42,8 +42,8 @@ export const Dashboard: React.FC<DashboardProps> = ({ evaluations, targetYearMon
     iframe.style.position = 'fixed';
     iframe.style.left = '-9999px';
     iframe.style.top = '-9999px';
-    iframe.style.width = '840px';
-    iframe.style.height = '1180px';
+    iframe.style.width = '760px';
+    iframe.style.height = '1080px';
     document.body.appendChild(iframe);
 
     const iframeDoc = iframe.contentWindow?.document;
@@ -62,59 +62,57 @@ export const Dashboard: React.FC<DashboardProps> = ({ evaluations, targetYearMon
           <meta charset="utf-8" />
           <style>
             * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Apple SD Gothic Neo', 'Malgun Gothic', 'Inter', sans-serif; }
-            body { background: #ffffff; color: #1e293b; padding: 36px 40px; line-height: 1.6; }
+            html, body { width: 760px; overflow: hidden; background: #ffffff; color: #1e293b; line-height: 1.5; }
             
             /* 액자식 모던 문서 프레임 */
             .doc-container {
+              width: 760px;
               border: 2px solid #26247B;
-              padding: 32px;
-              min-height: 1050px;
-              display: flex;
-              flex-col;
-              justify-content: space-between;
+              padding: 28px 32px;
               background: #ffffff;
+              box-sizing: border-box;
             }
             
             /* 모던 헤더 디자인 */
             .doc-header {
               border-bottom: 3px solid #26247B;
-              padding-bottom: 16px;
-              margin-bottom: 24px;
+              padding-bottom: 14px;
+              margin-bottom: 20px;
               display: flex;
               justify-content: space-between;
               align-items: flex-end;
             }
             .doc-title {
-              font-size: 26px;
+              font-size: 24px;
               font-weight: 800;
               color: #26247B;
               letter-spacing: -0.8px;
-              line-height: 1.3;
+              line-height: 1.2;
             }
             .doc-meta {
               text-align: right;
-              font-size: 13px;
+              font-size: 12px;
               color: #475569;
             }
             .doc-meta-date {
               font-weight: 700;
               color: #0f172a;
-              font-size: 14px;
+              font-size: 13px;
             }
 
             /* 섹션 타이틀 */
             .section-title {
-              font-size: 15px;
+              font-size: 14px;
               font-weight: 700;
               color: #0f172a;
-              margin-top: 24px;
-              margin-bottom: 12px;
+              margin-top: 18px;
+              margin-bottom: 10px;
               display: flex;
               align-items: center;
             }
             .section-title-badge {
               width: 4px;
-              height: 16px;
+              height: 14px;
               background: #26247B;
               display: inline-block;
               margin-right: 8px;
@@ -125,52 +123,48 @@ export const Dashboard: React.FC<DashboardProps> = ({ evaluations, targetYearMon
             .chart-wrapper {
               background: #f8fafc;
               border: 1px solid #e2e8f0;
-              border-radius: 12px;
-              padding: 20px;
+              border-radius: 10px;
+              padding: 16px;
               display: flex;
               flex-direction: column;
               align-items: center;
             }
 
-            /* 프리미엄 오피스 데이터 테이블 */
+            /* 프리미엄 오피스 데이터 테이블 (크기 지정하여 우측 넘침 차단) */
             .office-table {
               width: 100%;
-              border-collapse: separate;
-              border-spacing: 0;
-              margin-top: 8px;
-              border-radius: 8px;
+              table-layout: fixed;
+              border-collapse: collapse;
+              margin-top: 6px;
+              border-radius: 6px;
               overflow: hidden;
               border: 1px solid #cbd5e1;
-              font-size: 12px;
+              font-size: 11.5px;
             }
             .office-table th {
               background: #26247B;
               color: #ffffff;
               font-weight: 700;
-              padding: 10px 6px;
+              padding: 8px 4px;
               text-align: center;
-              border-bottom: 2px solid #1e1b4b;
+              border: 1px solid #1e1b4b;
             }
             .office-table td {
-              padding: 10px 6px;
+              padding: 8px 4px;
               text-align: center;
-              border-bottom: 1px solid #e2e8f0;
-              border-right: 1px solid #e2e8f0;
+              border: 1px solid #cbd5e1;
               color: #334155;
-            }
-            .office-table td:last-child {
-              border-right: none;
             }
             .office-table tr:nth-child(even) td {
               background: #f8fafc;
             }
             .office-table tr.rank-first td {
-              background: #fffbe6;
+              background: #fffbe6 !important;
               font-weight: 700;
               color: #78350f;
             }
             .office-table tr.rank-second td {
-              background: #ecfeff;
+              background: #ecfeff !important;
               font-weight: 700;
               color: #164e63;
             }
@@ -178,18 +172,18 @@ export const Dashboard: React.FC<DashboardProps> = ({ evaluations, targetYearMon
               font-weight: 800 !important;
               color: #26247B !important;
               background: #e0e7ff !important;
-              font-size: 13px !important;
+              font-size: 12px !important;
             }
 
             /* 포상 결과 카드 */
             .award-card {
               background: #f8fafc;
               border: 1px solid #cbd5e1;
-              border-radius: 10px;
-              padding: 16px;
-              margin-top: 8px;
-              font-size: 13px;
-              line-height: 1.8;
+              border-radius: 8px;
+              padding: 14px 16px;
+              margin-top: 6px;
+              font-size: 12.5px;
+              line-height: 1.7;
             }
             .award-badge-first {
               display: inline-block;
@@ -197,10 +191,10 @@ export const Dashboard: React.FC<DashboardProps> = ({ evaluations, targetYearMon
               color: #92400e;
               border: 1px solid #fde68a;
               font-weight: 700;
-              padding: 2px 8px;
+              padding: 1px 6px;
               border-radius: 4px;
-              font-size: 12px;
-              margin-right: 8px;
+              font-size: 11.5px;
+              margin-right: 6px;
             }
             .award-badge-second {
               display: inline-block;
@@ -208,20 +202,20 @@ export const Dashboard: React.FC<DashboardProps> = ({ evaluations, targetYearMon
               color: #155e75;
               border: 1px solid #a5f3fc;
               font-weight: 700;
-              padding: 2px 8px;
+              padding: 1px 6px;
               border-radius: 4px;
-              font-size: 12px;
-              margin-right: 8px;
+              font-size: 11.5px;
+              margin-right: 6px;
             }
 
             /* 푸터 */
             .doc-footer {
-              margin-top: 32px;
-              padding-top: 16px;
-              border-t: 1px solid #cbd5e1;
+              margin-top: 24px;
+              padding-top: 12px;
+              border-top: 1px solid #cbd5e1;
               display: flex;
               justify-content: space-between;
-              font-size: 11px;
+              font-size: 10.5px;
               color: #64748b;
             }
           </style>
