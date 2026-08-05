@@ -18,6 +18,17 @@ export const Dashboard: React.FC<DashboardProps> = ({ evaluations, targetYearMon
   const [isPdfGenerating, setIsPdfGenerating] = useState(false);
   const [isSummaryPdfGenerating, setIsSummaryPdfGenerating] = useState(false);
 
+  const formatKoreanTitle = (ym: string) => {
+    // "2026-06" -> "2026년 6월"
+    const parts = ym.split('-');
+    if (parts.length === 2) {
+      const year = parts[0];
+      const month = parseInt(parts[1], 10);
+      return `${year}년 ${month}월`;
+    }
+    return ym;
+  };
+
   const handleDownloadSummaryPDF = async () => {
     const element = document.getElementById('summary-pdf-template');
     if (!element) {
@@ -27,13 +38,12 @@ export const Dashboard: React.FC<DashboardProps> = ({ evaluations, targetYearMon
     
     setIsSummaryPdfGenerating(true);
 
-    // oklch() 색상이 포함된 메인 앱 CSS 영향을 받지 않도록 독립된 깨끗한 iframe 생성
     const iframe = document.createElement('iframe');
     iframe.style.position = 'fixed';
     iframe.style.left = '-9999px';
     iframe.style.top = '-9999px';
-    iframe.style.width = '794px';
-    iframe.style.height = '1123px';
+    iframe.style.width = '840px';
+    iframe.style.height = '1180px';
     document.body.appendChild(iframe);
 
     const iframeDoc = iframe.contentWindow?.document;
@@ -43,7 +53,7 @@ export const Dashboard: React.FC<DashboardProps> = ({ evaluations, targetYearMon
       return;
     }
 
-    // 표준 inline style만 포함된 인쇄용 HTML 작성
+    // Modern Executive Office 스타일 서식 주입
     iframeDoc.open();
     iframeDoc.write(`
       <!DOCTYPE html>
@@ -51,16 +61,169 @@ export const Dashboard: React.FC<DashboardProps> = ({ evaluations, targetYearMon
         <head>
           <meta charset="utf-8" />
           <style>
-            * { box-sizing: border-box; margin: 0; padding: 0; font-family: sans-serif; }
-            body { background: #ffffff; color: #000000; padding: 20px; }
-            .border-box { border: 3px solid #1e293b; padding: 20px; }
-            .header-bar { display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #1e293b; padding-bottom: 15px; margin-bottom: 20px; }
-            .badge { background: #e0e7ff; color: #26247b; font-weight: bold; padding: 4px 8px; border-radius: 4px; font-size: 12px; }
-            .title { font-size: 22px; font-weight: bold; margin-top: 5px; color: #0f172a; }
-            .table { width: 100%; border-collapse: collapse; margin-top: 15px; text-align: center; font-size: 12px; }
-            .table th { background: #0f172a; color: #ffffff; border: 1px solid #334155; padding: 8px; }
-            .table td { border: 1px solid #cbd5e1; padding: 8px; }
-            .award-box { background: #f8fafc; border: 1px solid #e2e8f0; padding: 15px; border-radius: 8px; margin-top: 15px; font-size: 13px; }
+            * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Apple SD Gothic Neo', 'Malgun Gothic', 'Inter', sans-serif; }
+            body { background: #ffffff; color: #1e293b; padding: 36px 40px; line-height: 1.6; }
+            
+            /* 액자식 모던 문서 프레임 */
+            .doc-container {
+              border: 2px solid #26247B;
+              padding: 32px;
+              min-height: 1050px;
+              display: flex;
+              flex-col;
+              justify-content: space-between;
+              background: #ffffff;
+            }
+            
+            /* 모던 헤더 디자인 */
+            .doc-header {
+              border-bottom: 3px solid #26247B;
+              padding-bottom: 16px;
+              margin-bottom: 24px;
+              display: flex;
+              justify-content: space-between;
+              align-items: flex-end;
+            }
+            .doc-title {
+              font-size: 26px;
+              font-weight: 800;
+              color: #26247B;
+              letter-spacing: -0.8px;
+              line-height: 1.3;
+            }
+            .doc-meta {
+              text-align: right;
+              font-size: 13px;
+              color: #475569;
+            }
+            .doc-meta-date {
+              font-weight: 700;
+              color: #0f172a;
+              font-size: 14px;
+            }
+
+            /* 섹션 타이틀 */
+            .section-title {
+              font-size: 15px;
+              font-weight: 700;
+              color: #0f172a;
+              margin-top: 24px;
+              margin-bottom: 12px;
+              display: flex;
+              align-items: center;
+            }
+            .section-title-badge {
+              width: 4px;
+              height: 16px;
+              background: #26247B;
+              display: inline-block;
+              margin-right: 8px;
+              border-radius: 2px;
+            }
+
+            /* 차트 컨테이너 */
+            .chart-wrapper {
+              background: #f8fafc;
+              border: 1px solid #e2e8f0;
+              border-radius: 12px;
+              padding: 20px;
+              display: flex;
+              flex-direction: column;
+              align-items: center;
+            }
+
+            /* 프리미엄 오피스 데이터 테이블 */
+            .office-table {
+              width: 100%;
+              border-collapse: separate;
+              border-spacing: 0;
+              margin-top: 8px;
+              border-radius: 8px;
+              overflow: hidden;
+              border: 1px solid #cbd5e1;
+              font-size: 12px;
+            }
+            .office-table th {
+              background: #26247B;
+              color: #ffffff;
+              font-weight: 700;
+              padding: 10px 6px;
+              text-align: center;
+              border-bottom: 2px solid #1e1b4b;
+            }
+            .office-table td {
+              padding: 10px 6px;
+              text-align: center;
+              border-bottom: 1px solid #e2e8f0;
+              border-right: 1px solid #e2e8f0;
+              color: #334155;
+            }
+            .office-table td:last-child {
+              border-right: none;
+            }
+            .office-table tr:nth-child(even) td {
+              background: #f8fafc;
+            }
+            .office-table tr.rank-first td {
+              background: #fffbe6;
+              font-weight: 700;
+              color: #78350f;
+            }
+            .office-table tr.rank-second td {
+              background: #ecfeff;
+              font-weight: 700;
+              color: #164e63;
+            }
+            .total-cell {
+              font-weight: 800 !important;
+              color: #26247B !important;
+              background: #e0e7ff !important;
+              font-size: 13px !important;
+            }
+
+            /* 포상 결과 카드 */
+            .award-card {
+              background: #f8fafc;
+              border: 1px solid #cbd5e1;
+              border-radius: 10px;
+              padding: 16px;
+              margin-top: 8px;
+              font-size: 13px;
+              line-height: 1.8;
+            }
+            .award-badge-first {
+              display: inline-block;
+              background: #fef3c7;
+              color: #92400e;
+              border: 1px solid #fde68a;
+              font-weight: 700;
+              padding: 2px 8px;
+              border-radius: 4px;
+              font-size: 12px;
+              margin-right: 8px;
+            }
+            .award-badge-second {
+              display: inline-block;
+              background: #cffafe;
+              color: #155e75;
+              border: 1px solid #a5f3fc;
+              font-weight: 700;
+              padding: 2px 8px;
+              border-radius: 4px;
+              font-size: 12px;
+              margin-right: 8px;
+            }
+
+            /* 푸터 */
+            .doc-footer {
+              margin-top: 32px;
+              padding-top: 16px;
+              border-t: 1px solid #cbd5e1;
+              display: flex;
+              justify-content: space-between;
+              font-size: 11px;
+              color: #64748b;
+            }
           </style>
         </head>
         <body>
@@ -70,7 +233,7 @@ export const Dashboard: React.FC<DashboardProps> = ({ evaluations, targetYearMon
     `);
     iframeDoc.close();
 
-    await new Promise(resolve => setTimeout(resolve, 300));
+    await new Promise(resolve => setTimeout(resolve, 350));
 
     try {
       const canvas = await html2canvas(iframeDoc.body, { 
@@ -86,7 +249,7 @@ export const Dashboard: React.FC<DashboardProps> = ({ evaluations, targetYearMon
       const pdfHeight = (canvas.height * pdfWidth) / canvas.width;
 
       pdf.addImage(imgData, 'PNG', 0, 0, pdfWidth, pdfHeight);
-      pdf.save(`월간_종합_평가_보고서_${targetYearMonth}.pdf`);
+      pdf.save(`${formatKoreanTitle(targetYearMonth)}_분임조_종합_평가_결과서.pdf`);
     } catch (err: any) {
       console.error('PDF 다운로드 실패:', err);
       alert(`PDF 생성 중 오류가 발생했습니다: ${err?.message || err}`);
@@ -106,8 +269,8 @@ export const Dashboard: React.FC<DashboardProps> = ({ evaluations, targetYearMon
     iframe.style.position = 'fixed';
     iframe.style.left = '-9999px';
     iframe.style.top = '-9999px';
-    iframe.style.width = '794px';
-    iframe.style.height = '1123px';
+    iframe.style.width = '840px';
+    iframe.style.height = '1180px';
     document.body.appendChild(iframe);
 
     const iframeDoc = iframe.contentWindow?.document;
@@ -124,11 +287,11 @@ export const Dashboard: React.FC<DashboardProps> = ({ evaluations, targetYearMon
         <head>
           <meta charset="utf-8" />
           <style>
-            * { box-sizing: border-box; margin: 0; padding: 0; font-family: sans-serif; }
-            body { background: #ffffff; color: #000000; padding: 20px; }
-            .border-box { border: 3px solid #1e293b; padding: 20px; }
-            .badge { background: #e0e7ff; color: #26247b; font-weight: bold; padding: 4px 8px; border-radius: 4px; font-size: 12px; }
-            .title { font-size: 22px; font-weight: bold; margin-top: 5px; color: #0f172a; }
+            * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif; }
+            body { background: #ffffff; color: #1e293b; padding: 36px 40px; line-height: 1.6; }
+            .doc-container { border: 2px solid #26247B; padding: 32px; min-height: 1050px; background: #ffffff; }
+            .doc-header { border-bottom: 3px solid #26247B; padding-bottom: 16px; margin-bottom: 24px; display: flex; justify-content: space-between; align-items: flex-end; }
+            .doc-title { font-size: 24px; font-weight: 800; color: #26247B; }
           </style>
         </head>
         <body>
@@ -138,7 +301,7 @@ export const Dashboard: React.FC<DashboardProps> = ({ evaluations, targetYearMon
     `);
     iframeDoc.close();
 
-    await new Promise(resolve => setTimeout(resolve, 300));
+    await new Promise(resolve => setTimeout(resolve, 350));
 
     try {
       const canvas = await html2canvas(iframeDoc.body, { 
@@ -154,7 +317,7 @@ export const Dashboard: React.FC<DashboardProps> = ({ evaluations, targetYearMon
       const pdfHeight = (canvas.height * pdfWidth) / canvas.width;
 
       pdf.addImage(imgData, 'PNG', 0, 0, pdfWidth, pdfHeight);
-      pdf.save(`분임조_평가_보고서_${selectedDetailCircle}_${targetYearMonth}.pdf`);
+      pdf.save(`${formatKoreanTitle(targetYearMonth)}_${selectedDetailCircle}_분임조_세부_평가_보고서.pdf`);
     } catch (err: any) {
       console.error('PDF 다운로드 실패:', err);
       alert(`PDF 생성 중 오류가 발생했습니다: ${err?.message || err}`);
@@ -593,129 +756,131 @@ export const Dashboard: React.FC<DashboardProps> = ({ evaluations, targetYearMon
     </div>
   )}
 
-      {/* 월간 종합 보고서 (인쇄용 오피스 리뉴얼 템플릿) */}
+      {/* 월간 종합 보고서 (인쇄용 모던 오피스 리뉴얼 템플릿) */}
       <div 
         id="summary-pdf-template" 
-        className="bg-white text-slate-900 p-10 font-sans"
-        style={{ position: 'absolute', top: '-9999px', left: '-9999px', width: '794px', minHeight: '1123px' }}
+        className="bg-white text-slate-900 font-sans"
+        style={{ position: 'absolute', top: '-9999px', left: '-9999px', width: '760px' }}
       >
-        <div className="border-4 border-slate-900 p-8 h-full">
-          {/* 기업 오피스 타이틀 헤더 */}
-          <div className="flex justify-between items-center border-b-2 border-slate-900 pb-4 mb-6">
-            <div>
-              <span className="text-xs font-bold uppercase tracking-widest text-indigo-700 bg-indigo-100 px-2.5 py-1 rounded">SAMYANG INNOCHEM OFFICIAL REPORT</span>
-              <h1 className="text-2xl font-black text-slate-900 mt-2 tracking-tight">
-                {targetYearMonth} 분임조 종합 평가 결의서
-              </h1>
+        <div className="doc-container">
+          <div>
+            {/* 오피스 타이틀 헤더 (요청에 따라 상단 서식 뱃지 제거 및 타이틀 변경) */}
+            <div className="doc-header">
+              <div>
+                <h1 className="doc-title">
+                  {formatKoreanTitle(targetYearMonth)} 분임조 종합 평가 결과서
+                </h1>
+              </div>
+              <div className="doc-meta">
+                <div>보고서 작성일</div>
+                <div className="doc-meta-date">{new Date().toLocaleDateString('ko-KR')}</div>
+              </div>
             </div>
-            <div className="text-right border-l-2 border-slate-200 pl-4">
-              <div className="text-xs text-slate-500 font-semibold">보고서 작성일</div>
-              <div className="text-sm font-bold text-slate-800">{new Date().toLocaleDateString('ko-KR')}</div>
+
+            {/* 1. 메인 종합 막대 차트 */}
+            <div style={{ marginBottom: '24px' }}>
+              <div className="section-title">
+                <span className="section-title-badge"></span>
+                <span>1. 분임조별 종합 점수 비교 차트</span>
+              </div>
+              <div className="chart-wrapper">
+                <BarChart width={660} height={220} data={barChartData} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
+                  <XAxis dataKey="name" stroke="#475569" fontSize={11} tickLine={false} fontWeight="bold" />
+                  <YAxis stroke="#475569" fontSize={11} domain={[0, 100]} />
+                  <Bar dataKey="3정5S" stackId="a" fill="#FFB800" isAnimationActive={false} />
+                  <Bar dataKey="분임조" stackId="a" fill="#1BE7FF" isAnimationActive={false} />
+                  <Bar dataKey="제안" stackId="a" fill="#6EEB83" isAnimationActive={false} />
+                </BarChart>
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '20px', marginTop: '10px', fontSize: '11px', fontWeight: 'bold', color: '#475569' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}><span style={{ width: '12px', height: '12px', background: '#FFB800', borderRadius: '2px', display: 'inline-block' }}/><span>3정 5S (20점)</span></div>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}><span style={{ width: '12px', height: '12px', background: '#1BE7FF', borderRadius: '2px', display: 'inline-block' }}/><span>분임조 (40점)</span></div>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}><span style={{ width: '12px', height: '12px', background: '#6EEB83', borderRadius: '2px', display: 'inline-block' }}/><span>제안 (40점)</span></div>
+                </div>
+              </div>
+            </div>
+
+            {/* 2. 종합 평가 점수 표 (테이블 격자 구조 정밀 적용) */}
+            <div style={{ marginBottom: '24px' }}>
+              <div className="section-title">
+                <span className="section-title-badge"></span>
+                <span>2. 분임조별 항목별 세부 집계표</span>
+              </div>
+              <table className="office-table">
+                <thead>
+                  <tr>
+                    <th>순위</th>
+                    <th>분임조명</th>
+                    <th>3정 5S</th>
+                    <th>회합</th>
+                    <th>테마진행</th>
+                    <th>계획달성</th>
+                    <th>테마완료</th>
+                    <th>제안활동</th>
+                    <th>불합리적출</th>
+                    <th style={{ background: '#1e1b4b', color: '#fef08a' }}>총점</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {sortedEvals.map((e, idx) => {
+                    const award = awardStatuses.find(a => a.circleName === e.circleName);
+                    const isFirst = award?.isFirstPlaceAward;
+                    const isSecond = award?.isSecondPlaceAward;
+                    const rowClass = isFirst ? 'rank-first' : isSecond ? 'rank-second' : '';
+                    return (
+                      <tr key={e.circleName} className={rowClass}>
+                        <td style={{ fontWeight: 'bold' }}>{idx + 1}</td>
+                        <td style={{ fontWeight: 'bold' }}>{e.circleName}</td>
+                        <td>{e.scores.maintScore}</td>
+                        <td>{e.scores.meetingScore}</td>
+                        <td>{e.scores.themeProgressScore}</td>
+                        <td>{e.scores.planAchievementScore}</td>
+                        <td>{e.scores.themeGradeScore + e.scores.themeCumulativeScore}</td>
+                        <td>{e.scores.proposalScore}</td>
+                        <td>{e.scores.unreasonableCountScore + e.scores.unreasonableResolveScore}</td>
+                        <td className="total-cell">{e.scores.totalScore}</td>
+                      </tr>
+                    );
+                  })}
+                </tbody>
+              </table>
+            </div>
+
+            {/* 3. 포상 결의 및 총평 */}
+            <div style={{ marginBottom: '24px' }}>
+              <div className="section-title">
+                <span className="section-title-badge"></span>
+                <span>3. 당월 포상 심의 결과</span>
+              </div>
+              <div className="award-card">
+                {awardStatuses.find(a => a.isFirstPlaceAward) ? (
+                  <div style={{ marginBottom: '6px' }}>
+                    <span className="award-badge-first">[최우수상]</span> 
+                    <strong style={{ color: '#0f172a' }}>{awardStatuses.find(a => a.isFirstPlaceAward)?.circleName} 분임조</strong>
+                    <span style={{ color: '#64748b', marginLeft: '6px' }}>(70점 이상 당월 최고 득점)</span>
+                  </div>
+                ) : (
+                  <div style={{ marginBottom: '6px' }}>
+                    <span style={{ background: '#e2e8f0', color: '#64748b', padding: '2px 8px', borderRadius: '4px', fontSize: '12px', marginRight: '8px' }}>[최우수상]</span> 
+                    <span style={{ color: '#64748b' }}>당월 대상 분임조 없음 (기준 점수 미달)</span>
+                  </div>
+                )}
+                {awardStatuses.find(a => a.isSecondPlaceAward) ? (
+                  <div>
+                    <span className="award-badge-second">[우수상]</span> 
+                    <strong style={{ color: '#0f172a' }}>{awardStatuses.find(a => a.isSecondPlaceAward)?.circleName} 분임조</strong>
+                    <span style={{ color: '#64748b', marginLeft: '6px' }}>(80점 이상 당월 2위 달성 포상 대상)</span>
+                  </div>
+                ) : (
+                  <div>
+                    <span style={{ background: '#e2e8f0', color: '#64748b', padding: '2px 8px', borderRadius: '4px', fontSize: '12px', marginRight: '8px' }}>[우수상]</span> 
+                    <span style={{ color: '#64748b' }}>당월 대상 분임조 없음 (기준 점수 미달)</span>
+                  </div>
+                )}
+              </div>
             </div>
           </div>
 
-          {/* 메인 종합 막대 차트 */}
-          <div className="mb-6">
-            <h3 className="text-sm font-bold mb-2 text-slate-800 flex items-center space-x-1.5">
-              <span className="w-2 h-4 bg-indigo-600 rounded-sm inline-block"></span>
-              <span>1. 분임조별 종합 점수 비교 차트</span>
-            </h3>
-            <div className="w-full flex justify-center bg-slate-100 border border-slate-200 p-4 rounded-xl">
-              <BarChart width={680} height={230} data={barChartData} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
-                <XAxis dataKey="name" stroke="#475569" fontSize={11} tickLine={false} fontWeight="bold" />
-                <YAxis stroke="#475569" fontSize={11} domain={[0, 100]} />
-                <Bar dataKey="3정5S" stackId="a" fill="#FFB800" isAnimationActive={false} />
-                <Bar dataKey="분임조" stackId="a" fill="#1BE7FF" isAnimationActive={false} />
-                <Bar dataKey="제안" stackId="a" fill="#6EEB83" isAnimationActive={false} />
-              </BarChart>
-            </div>
-            <div className="flex items-center justify-center space-x-6 mt-2 text-xs font-semibold text-slate-600">
-              <div className="flex items-center space-x-1.5"><span className="w-3 h-3 bg-[#FFB800] rounded-sm inline-block"/><span>3정 5S (20점)</span></div>
-              <div className="flex items-center space-x-1.5"><span className="w-3 h-3 bg-[#1BE7FF] rounded-sm inline-block"/><span>분임조 (40점)</span></div>
-              <div className="flex items-center space-x-1.5"><span className="w-3 h-3 bg-[#6EEB83] rounded-sm inline-block"/><span>제안 (40점)</span></div>
-            </div>
-          </div>
-
-          {/* 종합 평가 점수 표 */}
-          <div className="mb-6">
-            <h3 className="text-sm font-bold mb-2 text-slate-800 flex items-center space-x-1.5">
-              <span className="w-2 h-4 bg-indigo-600 rounded-sm inline-block"></span>
-              <span>2. 분임조별 항목별 세부 집계표</span>
-            </h3>
-            <table className="w-full border-collapse border border-slate-300 text-center text-xs">
-              <thead>
-                <tr className="bg-slate-900 text-white font-bold">
-                  <th className="border border-slate-700 py-2">순위</th>
-                  <th className="border border-slate-700 py-2">분임조명</th>
-                  <th className="border border-slate-700 py-2">3정 5S</th>
-                  <th className="border border-slate-700 py-2">회합</th>
-                  <th className="border border-slate-700 py-2">테마진행</th>
-                  <th className="border border-slate-700 py-2">계획달성</th>
-                  <th className="border border-slate-700 py-2">테마완료</th>
-                  <th className="border border-slate-700 py-2">제안활동</th>
-                  <th className="border border-slate-700 py-2">불합리적출</th>
-                  <th className="border border-slate-700 py-2 bg-indigo-700 text-amber-300">총점</th>
-                </tr>
-              </thead>
-              <tbody>
-                {sortedEvals.map((e, idx) => {
-                  const award = awardStatuses.find(a => a.circleName === e.circleName);
-                  const isFirst = award?.isFirstPlaceAward;
-                  const isSecond = award?.isSecondPlaceAward;
-                  return (
-                    <tr key={e.circleName} className={isFirst ? "bg-amber-50 font-semibold" : isSecond ? "bg-cyan-50 font-semibold" : "even:bg-slate-100"}>
-                      <td className="border border-slate-300 py-2 font-bold">{idx + 1}</td>
-                      <td className="border border-slate-300 py-2 font-bold">{e.circleName}</td>
-                      <td className="border border-slate-300 py-2">{e.scores.maintScore}</td>
-                      <td className="border border-slate-300 py-2">{e.scores.meetingScore}</td>
-                      <td className="border border-slate-300 py-2">{e.scores.themeProgressScore}</td>
-                      <td className="border border-slate-300 py-2">{e.scores.planAchievementScore}</td>
-                      <td className="border border-slate-300 py-2">{e.scores.themeGradeScore + e.scores.themeCumulativeScore}</td>
-                      <td className="border border-slate-300 py-2">{e.scores.proposalScore}</td>
-                      <td className="border border-slate-300 py-2">{e.scores.unreasonableCountScore + e.scores.unreasonableResolveScore}</td>
-                      <td className="border border-slate-300 py-2 font-black text-indigo-900 bg-indigo-100 text-sm">{e.scores.totalScore}</td>
-                    </tr>
-                  );
-                })}
-              </tbody>
-            </table>
-          </div>
-
-          {/* 포상 결의 및 총평 */}
-          <div className="mb-6">
-            <h3 className="text-sm font-bold mb-2 text-slate-800 flex items-center space-x-1.5">
-              <span className="w-2 h-4 bg-indigo-600 rounded-sm inline-block"></span>
-              <span>3. 당월 포상 심의 결과</span>
-            </h3>
-            <div className="bg-slate-50 border border-slate-200 rounded-xl p-4 text-xs space-y-2 text-slate-800">
-              {awardStatuses.find(a => a.isFirstPlaceAward) ? (
-                <div className="flex items-center space-x-3">
-                  <span className="font-bold text-amber-700 bg-amber-100 px-2 py-0.5 rounded border border-amber-300">[최우수상]</span> 
-                  <span className="font-bold text-slate-900 text-sm">{awardStatuses.find(a => a.isFirstPlaceAward)?.circleName} 분임조</span>
-                  <span className="text-slate-500">(70점 이상 당월 최고 득점)</span>
-                </div>
-              ) : (
-                <div className="flex items-center space-x-3">
-                  <span className="font-bold text-slate-500 bg-slate-200 px-2 py-0.5 rounded">[최우수상]</span> 
-                  <span className="text-slate-500">당월 대상 분임조 없음 (기준 점수 미달)</span>
-                </div>
-              )}
-              {awardStatuses.find(a => a.isSecondPlaceAward) ? (
-                <div className="flex items-center space-x-3">
-                  <span className="font-bold text-cyan-700 bg-cyan-100 px-2 py-0.5 rounded border border-cyan-300">[우수상]</span> 
-                  <span className="font-bold text-slate-900 text-sm">{awardStatuses.find(a => a.isSecondPlaceAward)?.circleName} 분임조</span>
-                  <span className="text-slate-500">(80점 이상 당월 2위 달성 포상 대상)</span>
-                </div>
-              ) : (
-                <div className="flex items-center space-x-3">
-                  <span className="font-bold text-slate-500 bg-slate-200 px-2 py-0.5 rounded">[우수상]</span> 
-                  <span className="text-slate-500">당월 대상 분임조 없음 (기준 점수 미달)</span>
-                </div>
-              )}
-            </div>
-          </div>
-          
-          <div className="mt-10 pt-4 border-t border-slate-300 flex justify-between items-center text-xs text-slate-400">
+          <div className="doc-footer">
             <span>삼양이노켐 주식회사 환경기술팀</span>
             <span>삼양이노켐 품질분임조 평가 및 집계 시스템 자동 생성 문서</span>
           </div>
