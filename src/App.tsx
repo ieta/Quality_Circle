@@ -30,91 +30,16 @@ export function App() {
     const saved = localStorage.getItem('qc_evaluations');
     if (saved) return JSON.parse(saved);
 
-    // 기본 가상 초기 8월 평가 데이터 생성
-    const defaultAug: Record<CircleName, MonthlyCircleEvaluation> = {
-      '금메달': {
-        circleName: '금메달',
-        yearMonth: '2026-08',
-        scores: calculateTotalScore({
-          maintDefectCount: 1,
-          meetingCount: 4,
-          prevThemeStep: '7단계 - 결과분석',
-          currThemeStep: '9단계 - 표준화',
-          planAchievementRate: 95,
-          themeGrade: '2급',
-          themeCumulativeCount: 3,
-          totalProposalCount: 32,
-          totalUnreasonableCount: 22,
-          unreasonableResolveRate: 85
-        }, 10)
-      },
-      '한마음': {
-        circleName: '한마음',
-        yearMonth: '2026-08',
-        scores: calculateTotalScore({
-          maintDefectCount: 2,
-          meetingCount: 3,
-          prevThemeStep: '3단계 - 원인분석',
-          currThemeStep: '4단계 - 목표설정',
-          planAchievementRate: 80,
-          themeGrade: '미완료',
-          themeCumulativeCount: 1,
-          totalProposalCount: 15,
-          totalUnreasonableCount: 12,
-          unreasonableResolveRate: 70
-        }, 10)
-      },
-      '독수리': {
-        circleName: '독수리',
-        yearMonth: '2026-08',
-        scores: calculateTotalScore({
-          maintDefectCount: 0,
-          meetingCount: 5,
-          prevThemeStep: '9단계 - 표준화',
-          currThemeStep: '1단계 - 테마주제선정', // 2단계 전진 (순환)
-          planAchievementRate: 100,
-          themeGrade: '1급',
-          themeCumulativeCount: 4,
-          totalProposalCount: 35,
-          totalUnreasonableCount: 25,
-          unreasonableResolveRate: 90
-        }, 10)
-      },
-      '아리울': {
-        circleName: '아리울',
-        yearMonth: '2026-08',
-        scores: calculateTotalScore({
-          maintDefectCount: 3,
-          meetingCount: 2,
-          prevThemeStep: '2단계 - 현상파악',
-          currThemeStep: '3단계 - 원인분석',
-          planAchievementRate: 75,
-          themeGrade: '미완료',
-          themeCumulativeCount: 1,
-          totalProposalCount: 12,
-          totalUnreasonableCount: 8,
-          unreasonableResolveRate: 60
-        }, 10)
-      },
-      '새만금': {
-        circleName: '새만금',
-        yearMonth: '2026-08',
-        scores: calculateTotalScore({
-          maintDefectCount: 4,
-          meetingCount: 3,
-          prevThemeStep: '4단계 - 목표설정',
-          currThemeStep: '6단계 - 대책실시',
-          planAchievementRate: 85,
-          themeGrade: '3급',
-          themeCumulativeCount: 2,
-          totalProposalCount: 20,
-          totalUnreasonableCount: 15,
-          unreasonableResolveRate: 75
-        }, 10)
-      }
+    // 기본 초기 평가 데이터 (모든 수치 0부터 시작)
+    const defaultInit: Record<CircleName, MonthlyCircleEvaluation> = {
+      '금메달': { circleName: '금메달', yearMonth: '2026-06', scores: calculateTotalScore({ maintDefectCount: 0, meetingCount: 0, prevThemeStep: '1단계 - 테마주제선정', currThemeStep: '1단계 - 테마주제선정', planAchievementRate: 0, themeGrade: '미완료', themeCumulativeCount: 0, totalProposalCount: 0, totalUnreasonableCount: 0, unreasonableResolveRate: 0 }, 10) },
+      '한마음': { circleName: '한마음', yearMonth: '2026-06', scores: calculateTotalScore({ maintDefectCount: 0, meetingCount: 0, prevThemeStep: '1단계 - 테마주제선정', currThemeStep: '1단계 - 테마주제선정', planAchievementRate: 0, themeGrade: '미완료', themeCumulativeCount: 0, totalProposalCount: 0, totalUnreasonableCount: 0, unreasonableResolveRate: 0 }, 10) },
+      '독수리': { circleName: '독수리', yearMonth: '2026-06', scores: calculateTotalScore({ maintDefectCount: 0, meetingCount: 0, prevThemeStep: '1단계 - 테마주제선정', currThemeStep: '1단계 - 테마주제선정', planAchievementRate: 0, themeGrade: '미완료', themeCumulativeCount: 0, totalProposalCount: 0, totalUnreasonableCount: 0, unreasonableResolveRate: 0 }, 10) },
+      '아리울': { circleName: '아리울', yearMonth: '2026-06', scores: calculateTotalScore({ maintDefectCount: 0, meetingCount: 0, prevThemeStep: '1단계 - 테마주제선정', currThemeStep: '1단계 - 테마주제선정', planAchievementRate: 0, themeGrade: '미완료', themeCumulativeCount: 0, totalProposalCount: 0, totalUnreasonableCount: 0, unreasonableResolveRate: 0 }, 10) },
+      '새만금': { circleName: '새만금', yearMonth: '2026-06', scores: calculateTotalScore({ maintDefectCount: 0, meetingCount: 0, prevThemeStep: '1단계 - 테마주제선정', currThemeStep: '1단계 - 테마주제선정', planAchievementRate: 0, themeGrade: '미완료', themeCumulativeCount: 0, totalProposalCount: 0, totalUnreasonableCount: 0, unreasonableResolveRate: 0 }, 10) },
     };
 
-    return { '2026-08': defaultAug };
+    return { '2026-06': defaultInit };
   });
 
   // LocalStorage 저장 동기화
