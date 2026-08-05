@@ -37,12 +37,12 @@ export const EvaluatorForm: React.FC<EvaluatorFormProps> = ({
       meetingCount: 0,
       prevThemeStep: '1단계 - 테마주제선정',
       currThemeStep: '1단계 - 테마주제선정',
-      planAchievementRate: 100,
+      planAchievementRate: 0,
       themeGrade: '미완료',
       themeCumulativeCount: 0,
       totalProposalCount: 0,
       totalUnreasonableCount: 0,
-      unreasonableResolveRate: 100
+      unreasonableResolveRate: 0
     }, currentCircleInfo.membersCount)
   };
 
