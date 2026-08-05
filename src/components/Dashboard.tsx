@@ -43,7 +43,7 @@ export const Dashboard: React.FC<DashboardProps> = ({ evaluations, targetYearMon
     iframe.style.left = '-9999px';
     iframe.style.top = '-9999px';
     iframe.style.width = '760px';
-    iframe.style.height = '1080px';
+    iframe.style.height = '1120px';
     document.body.appendChild(iframe);
 
     const iframeDoc = iframe.contentWindow?.document;
@@ -64,11 +64,11 @@ export const Dashboard: React.FC<DashboardProps> = ({ evaluations, targetYearMon
             * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Apple SD Gothic Neo', 'Malgun Gothic', 'Inter', sans-serif; }
             html, body { width: 760px; overflow: hidden; background: #ffffff; color: #1e293b; line-height: 1.5; }
             
-            /* 액자식 모던 문서 프레임 */
+            /* 액자식 모던 문서 프레임 (상단 여백 2배 확장 & 하단 여백 정돈) */
             .doc-container {
               width: 760px;
               border: 2px solid #26247B;
-              padding: 28px 32px;
+              padding: 56px 36px 28px 36px;
               background: #ffffff;
               box-sizing: border-box;
             }
@@ -76,14 +76,14 @@ export const Dashboard: React.FC<DashboardProps> = ({ evaluations, targetYearMon
             /* 모던 헤더 디자인 */
             .doc-header {
               border-bottom: 3px solid #26247B;
-              padding-bottom: 14px;
-              margin-bottom: 20px;
+              padding-bottom: 16px;
+              margin-bottom: 24px;
               display: flex;
               justify-content: space-between;
               align-items: flex-end;
             }
             .doc-title {
-              font-size: 24px;
+              font-size: 25px;
               font-weight: 800;
               color: #26247B;
               letter-spacing: -0.8px;
@@ -102,11 +102,11 @@ export const Dashboard: React.FC<DashboardProps> = ({ evaluations, targetYearMon
 
             /* 섹션 타이틀 */
             .section-title {
-              font-size: 14px;
+              font-size: 14.5px;
               font-weight: 700;
               color: #0f172a;
-              margin-top: 18px;
-              margin-bottom: 10px;
+              margin-top: 22px;
+              margin-bottom: 12px;
               display: flex;
               align-items: center;
             }
@@ -124,13 +124,13 @@ export const Dashboard: React.FC<DashboardProps> = ({ evaluations, targetYearMon
               background: #f8fafc;
               border: 1px solid #e2e8f0;
               border-radius: 10px;
-              padding: 16px;
+              padding: 18px;
               display: flex;
               flex-direction: column;
               align-items: center;
             }
 
-            /* 프리미엄 오피스 데이터 테이블 (크기 지정하여 우측 넘침 차단) */
+            /* 깔끔한 백그라운드 단일 스타일 데이터 테이블 (하이라이트 제거) */
             .office-table {
               width: 100%;
               table-layout: fixed;
@@ -139,40 +139,31 @@ export const Dashboard: React.FC<DashboardProps> = ({ evaluations, targetYearMon
               border-radius: 6px;
               overflow: hidden;
               border: 1px solid #cbd5e1;
-              font-size: 11.5px;
+              font-size: 12px;
             }
             .office-table th {
               background: #26247B;
               color: #ffffff;
               font-weight: 700;
-              padding: 8px 4px;
+              padding: 9px 4px;
               text-align: center;
               border: 1px solid #1e1b4b;
             }
             .office-table td {
-              padding: 8px 4px;
+              padding: 9px 4px;
               text-align: center;
               border: 1px solid #cbd5e1;
               color: #334155;
+              background: #ffffff;
             }
             .office-table tr:nth-child(even) td {
               background: #f8fafc;
             }
-            .office-table tr.rank-first td {
-              background: #fffbe6 !important;
-              font-weight: 700;
-              color: #78350f;
-            }
-            .office-table tr.rank-second td {
-              background: #ecfeff !important;
-              font-weight: 700;
-              color: #164e63;
-            }
             .total-cell {
               font-weight: 800 !important;
               color: #26247B !important;
-              background: #e0e7ff !important;
-              font-size: 12px !important;
+              background: #f1f5f9 !important;
+              font-size: 12.5px !important;
             }
 
             /* 포상 결과 카드 */
@@ -180,10 +171,10 @@ export const Dashboard: React.FC<DashboardProps> = ({ evaluations, targetYearMon
               background: #f8fafc;
               border: 1px solid #cbd5e1;
               border-radius: 8px;
-              padding: 14px 16px;
+              padding: 16px;
               margin-top: 6px;
-              font-size: 12.5px;
-              line-height: 1.7;
+              font-size: 13px;
+              line-height: 1.8;
             }
             .award-badge-first {
               display: inline-block;
@@ -210,12 +201,12 @@ export const Dashboard: React.FC<DashboardProps> = ({ evaluations, targetYearMon
 
             /* 푸터 */
             .doc-footer {
-              margin-top: 24px;
-              padding-top: 12px;
+              margin-top: 32px;
+              padding-top: 14px;
               border-top: 1px solid #cbd5e1;
               display: flex;
               justify-content: space-between;
-              font-size: 10.5px;
+              font-size: 11px;
               color: #64748b;
             }
           </style>
@@ -816,12 +807,8 @@ export const Dashboard: React.FC<DashboardProps> = ({ evaluations, targetYearMon
                 </thead>
                 <tbody>
                   {sortedEvals.map((e, idx) => {
-                    const award = awardStatuses.find(a => a.circleName === e.circleName);
-                    const isFirst = award?.isFirstPlaceAward;
-                    const isSecond = award?.isSecondPlaceAward;
-                    const rowClass = isFirst ? 'rank-first' : isSecond ? 'rank-second' : '';
                     return (
-                      <tr key={e.circleName} className={rowClass}>
+                      <tr key={e.circleName}>
                         <td style={{ fontWeight: 'bold' }}>{idx + 1}</td>
                         <td style={{ fontWeight: 'bold' }}>{e.circleName}</td>
                         <td>{e.scores.maintScore}</td>
