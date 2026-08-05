@@ -190,7 +190,7 @@ export function App() {
             onClick={() => setActiveTab('dashboard')}
             className={`flex items-center space-x-2 px-5 py-2.5 rounded-xl text-sm font-semibold transition-all duration-300 cursor-pointer ${
               activeTab === 'dashboard'
-                ? 'bg-gradient-to-r from-indigo-500 to-purple-600 text-white shadow-lg shadow-indigo-500/25 border border-indigo-400/30'
+                ? 'bg-gradient-to-r from-[#26247B] to-[#3b389e] text-white shadow-lg shadow-[#26247B]/40 border border-indigo-400/40'
                 : 'text-slate-400 hover:text-white hover:bg-white/5 border border-transparent'
             }`}
           >
@@ -202,7 +202,7 @@ export function App() {
             onClick={() => setActiveTab('input')}
             className={`flex items-center space-x-2 px-5 py-2.5 rounded-xl text-sm font-semibold transition-all duration-300 cursor-pointer ${
               activeTab === 'input'
-                ? 'bg-gradient-to-r from-indigo-500 to-purple-600 text-white shadow-lg shadow-indigo-500/25 border border-indigo-400/30'
+                ? 'bg-gradient-to-r from-[#26247B] to-[#3b389e] text-white shadow-lg shadow-[#26247B]/40 border border-indigo-400/40'
                 : 'text-slate-400 hover:text-white hover:bg-white/5 border border-transparent'
             }`}
           >
@@ -214,7 +214,7 @@ export function App() {
             onClick={() => setActiveTab('manage')}
             className={`flex items-center space-x-2 px-5 py-2.5 rounded-xl text-sm font-semibold transition-all duration-300 cursor-pointer ${
               activeTab === 'manage'
-                ? 'bg-gradient-to-r from-indigo-500 to-purple-600 text-white shadow-lg shadow-indigo-500/25 border border-indigo-400/30'
+                ? 'bg-gradient-to-r from-[#26247B] to-[#3b389e] text-white shadow-lg shadow-[#26247B]/40 border border-indigo-400/40'
                 : 'text-slate-400 hover:text-white hover:bg-white/5 border border-transparent'
             }`}
           >

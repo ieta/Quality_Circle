@@ -287,24 +287,24 @@ export const Dashboard: React.FC<DashboardProps> = ({ evaluations, targetYearMon
                   cursor={{ fill: 'rgba(255, 255, 255, 0.05)' }}
                   contentStyle={{ backgroundColor: 'rgba(15, 23, 42, 0.85)', backdropFilter: 'blur(12px)', borderColor: 'rgba(255, 255, 255, 0.1)', borderRadius: '0.75rem', color: '#f8fafc', boxShadow: '0 10px 25px rgba(0,0,0,0.5)' }} 
                 />
-                <Bar dataKey="3정5S" stackId="a" fill="#f59e0b" radius={[0, 0, 0, 0]} />
-                <Bar dataKey="분임조" stackId="a" fill="#06b6d4" radius={[0, 0, 0, 0]} />
-                <Bar dataKey="제안" stackId="a" fill="#10b981" radius={[4, 4, 0, 0]} />
+                <Bar dataKey="3정5S" stackId="a" fill="#FFB800" radius={[0, 0, 0, 0]} />
+                <Bar dataKey="분임조" stackId="a" fill="#1BE7FF" radius={[0, 0, 0, 0]} />
+                <Bar dataKey="제안" stackId="a" fill="#6EEB83" radius={[4, 4, 0, 0]} />
               </BarChart>
             </ResponsiveContainer>
           </div>
 
           <div className="flex items-center justify-center space-x-6 mt-4 text-xs font-semibold">
             <div className="flex items-center space-x-2">
-              <span className="w-3 h-3 rounded-sm bg-amber-500 inline-block" />
+              <span className="w-3 h-3 rounded-sm bg-[#FFB800] inline-block" />
               <span className="text-slate-300">3정 5S (20점)</span>
             </div>
             <div className="flex items-center space-x-2">
-              <span className="w-3 h-3 rounded-sm bg-cyan-500 inline-block" />
+              <span className="w-3 h-3 rounded-sm bg-[#1BE7FF] inline-block" />
               <span className="text-slate-300">분임조 (40점)</span>
             </div>
             <div className="flex items-center space-x-2">
-              <span className="w-3 h-3 rounded-sm bg-emerald-500 inline-block" />
+              <span className="w-3 h-3 rounded-sm bg-[#6EEB83] inline-block" />
               <span className="text-slate-300">제안 (40점)</span>
             </div>
           </div>
@@ -558,15 +558,15 @@ export const Dashboard: React.FC<DashboardProps> = ({ evaluations, targetYearMon
               <BarChart width={680} height={230} data={barChartData} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
                 <XAxis dataKey="name" stroke="#475569" fontSize={11} tickLine={false} fontWeight="bold" />
                 <YAxis stroke="#475569" fontSize={11} domain={[0, 100]} />
-                <Bar dataKey="3정5S" stackId="a" fill="#f59e0b" isAnimationActive={false} />
-                <Bar dataKey="분임조" stackId="a" fill="#06b6d4" isAnimationActive={false} />
-                <Bar dataKey="제안" stackId="a" fill="#10b981" isAnimationActive={false} />
+                <Bar dataKey="3정5S" stackId="a" fill="#FFB800" isAnimationActive={false} />
+                <Bar dataKey="분임조" stackId="a" fill="#1BE7FF" isAnimationActive={false} />
+                <Bar dataKey="제안" stackId="a" fill="#6EEB83" isAnimationActive={false} />
               </BarChart>
             </div>
             <div className="flex items-center justify-center space-x-6 mt-2 text-xs font-semibold text-slate-600">
-              <div className="flex items-center space-x-1.5"><span className="w-3 h-3 bg-[#f59e0b] rounded-sm inline-block"/><span>3정 5S (20점)</span></div>
-              <div className="flex items-center space-x-1.5"><span className="w-3 h-3 bg-[#06b6d4] rounded-sm inline-block"/><span>분임조 (40점)</span></div>
-              <div className="flex items-center space-x-1.5"><span className="w-3 h-3 bg-[#10b981] rounded-sm inline-block"/><span>제안 (40점)</span></div>
+              <div className="flex items-center space-x-1.5"><span className="w-3 h-3 bg-[#FFB800] rounded-sm inline-block"/><span>3정 5S (20점)</span></div>
+              <div className="flex items-center space-x-1.5"><span className="w-3 h-3 bg-[#1BE7FF] rounded-sm inline-block"/><span>분임조 (40점)</span></div>
+              <div className="flex items-center space-x-1.5"><span className="w-3 h-3 bg-[#6EEB83] rounded-sm inline-block"/><span>제안 (40점)</span></div>
             </div>
           </div>
 
