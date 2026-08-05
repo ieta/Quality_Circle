@@ -39,7 +39,28 @@ export const Dashboard: React.FC<DashboardProps> = ({ evaluations, targetYearMon
         useCORS: true, 
         backgroundColor: '#ffffff',
         scrollY: 0,
-        logging: false
+        logging: false,
+        onclone: (clonedDoc: Document) => {
+          // html2canvas가 Tailwind v4의 oklch()나 현대적 CSS 변수를 분석하지 못해 나는 에러 방지
+          const clonedEl = clonedDoc.getElementById('summary-pdf-template');
+          if (clonedEl) {
+            clonedEl.style.fontFamily = 'sans-serif';
+            // 복제본의 모든 요소에서 oklch/lab 등 지원되지 않는 색상 속성을 표준 RGB/Hex로 안전하게 대체
+            const allElements = clonedEl.querySelectorAll('*');
+            allElements.forEach((el: any) => {
+              const computed = window.getComputedStyle(el);
+              if (computed.backgroundColor && computed.backgroundColor.includes('oklch')) {
+                el.style.backgroundColor = '#ffffff';
+              }
+              if (computed.color && computed.color.includes('oklch')) {
+                el.style.color = '#000000';
+              }
+              if (computed.borderColor && computed.borderColor.includes('oklch')) {
+                el.style.borderColor = '#cbd5e1';
+              }
+            });
+          }
+        }
       } as any);
       const imgData = canvas.toDataURL('image/png');
       
@@ -77,7 +98,26 @@ export const Dashboard: React.FC<DashboardProps> = ({ evaluations, targetYearMon
         useCORS: true, 
         backgroundColor: '#ffffff',
         scrollY: 0,
-        logging: false
+        logging: false,
+        onclone: (clonedDoc: Document) => {
+          const clonedEl = clonedDoc.getElementById('pdf-report-template');
+          if (clonedEl) {
+            clonedEl.style.fontFamily = 'sans-serif';
+            const allElements = clonedEl.querySelectorAll('*');
+            allElements.forEach((el: any) => {
+              const computed = window.getComputedStyle(el);
+              if (computed.backgroundColor && computed.backgroundColor.includes('oklch')) {
+                el.style.backgroundColor = '#ffffff';
+              }
+              if (computed.color && computed.color.includes('oklch')) {
+                el.style.color = '#000000';
+              }
+              if (computed.borderColor && computed.borderColor.includes('oklch')) {
+                el.style.borderColor = '#cbd5e1';
+              }
+            });
+          }
+        }
       } as any);
       const imgData = canvas.toDataURL('image/png');
       
