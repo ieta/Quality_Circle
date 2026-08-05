@@ -1,18 +1,12 @@
 @echo off
 chcp 65001 > nul
-echo ===================================================
-echo   Quality Circle 분임조 평가 대시보드 실행 중...
-echo ===================================================
-echo.
-
 cd /d "%~dp0"
-echo 현재 위치: %CD%
-echo.
 
-echo 개발 서버를 시작합니다 (http://localhost:5173)...
-echo 종료하려면 이 창을 닫거나 Ctrl+C를 누르세요.
-echo.
+:: 1. 개발 서버가 이미 떠있는지 또는 새로 띄울지 실행
+start /min cmd /c "npm run dev"
 
-call npm install
-call npm run dev
-pause
+:: 2. 서버 준비 대기 (2초)
+timeout /t 2 /nobreak > nul
+
+:: 3. 브라우저로 화면 진입
+start "" "http://localhost:5173"
