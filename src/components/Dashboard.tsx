@@ -442,7 +442,7 @@ export const Dashboard: React.FC<DashboardProps> = ({ evaluations, targetYearMon
             {/* 오피스 스타일 헤더 */}
             <div className="flex items-center justify-between border-b-2 border-slate-900 pb-4 mb-6">
               <div>
-                <span className="text-xs font-bold uppercase tracking-widest text-indigo-700 bg-indigo-50 px-2.5 py-1 rounded">SAMYANG INNOCHEM QUALITY CIRCLE</span>
+                <span className="text-xs font-bold uppercase tracking-widest text-indigo-700 bg-indigo-100 px-2.5 py-1 rounded">SAMYANG INNOCHEM QUALITY CIRCLE</span>
                 <h1 className="text-2xl font-black text-slate-900 mt-2 tracking-tight">분임조 세부 평가 결과 보고서</h1>
               </div>
               <div className="text-right">
@@ -465,7 +465,7 @@ export const Dashboard: React.FC<DashboardProps> = ({ evaluations, targetYearMon
 
             <div className="grid grid-cols-2 gap-6 mb-6">
               {/* 레이더 차트 영역 */}
-              <div className="bg-slate-50 border border-slate-200 rounded-xl p-4 flex flex-col items-center justify-center">
+              <div className="bg-slate-100 border border-slate-200 rounded-xl p-4 flex flex-col items-center justify-center">
                 <h3 className="text-sm font-bold text-slate-700 mb-2">■ 영역별 밸런스 차트</h3>
                 <div className="w-[340px] h-[300px]">
                   <RadarChart width={340} height={300} data={detailRadarData}>
@@ -479,7 +479,7 @@ export const Dashboard: React.FC<DashboardProps> = ({ evaluations, targetYearMon
 
               {/* 세부 점수 테이블 */}
               <div className="space-y-3">
-                <div className="bg-amber-50/50 border border-amber-200 rounded-xl p-3.5">
+                <div className="bg-amber-50 border border-amber-200 rounded-xl p-3.5">
                   <div className="flex justify-between items-center mb-1">
                     <h4 className="font-bold text-sm text-amber-900">1. 3정 5S</h4>
                     <span className="text-sm font-black text-amber-600">{detailEval.scores.maintScore} / 20점</span>
@@ -487,7 +487,7 @@ export const Dashboard: React.FC<DashboardProps> = ({ evaluations, targetYearMon
                   <p className="text-xs text-slate-600">· 관할구역 불합리 발견: <b>{detailEval.scores.maintDefectCount}건</b></p>
                 </div>
 
-                <div className="bg-cyan-50/50 border border-cyan-200 rounded-xl p-3.5">
+                <div className="bg-cyan-50 border border-cyan-200 rounded-xl p-3.5">
                   <div className="flex justify-between items-center mb-1">
                     <h4 className="font-bold text-sm text-cyan-900">2. 분임조 활동</h4>
                     <span className="text-sm font-black text-cyan-600">{
@@ -502,7 +502,7 @@ export const Dashboard: React.FC<DashboardProps> = ({ evaluations, targetYearMon
                   <p className="text-xs text-slate-600">· 테마 진행: <b>{detailEval.scores.prevThemeStep} ➔ {detailEval.scores.currThemeStep}</b></p>
                 </div>
 
-                <div className="bg-emerald-50/50 border border-emerald-200 rounded-xl p-3.5">
+                <div className="bg-emerald-50 border border-emerald-200 rounded-xl p-3.5">
                   <div className="flex justify-between items-center mb-1">
                     <h4 className="font-bold text-sm text-emerald-900">3. 제안 및 개선</h4>
                     <span className="text-sm font-black text-emerald-600">{
@@ -537,7 +537,7 @@ export const Dashboard: React.FC<DashboardProps> = ({ evaluations, targetYearMon
           {/* 기업 오피스 타이틀 헤더 */}
           <div className="flex justify-between items-center border-b-2 border-slate-900 pb-4 mb-6">
             <div>
-              <span className="text-xs font-bold uppercase tracking-widest text-indigo-700 bg-indigo-50 px-2.5 py-1 rounded">SAMYANG INNOCHEM OFFICIAL REPORT</span>
+              <span className="text-xs font-bold uppercase tracking-widest text-indigo-700 bg-indigo-100 px-2.5 py-1 rounded">SAMYANG INNOCHEM OFFICIAL REPORT</span>
               <h1 className="text-2xl font-black text-slate-900 mt-2 tracking-tight">
                 {targetYearMonth} 분임조 종합 평가 결의서
               </h1>
@@ -554,7 +554,7 @@ export const Dashboard: React.FC<DashboardProps> = ({ evaluations, targetYearMon
               <span className="w-2 h-4 bg-indigo-600 rounded-sm inline-block"></span>
               <span>1. 분임조별 종합 점수 비교 차트</span>
             </h3>
-            <div className="w-full flex justify-center bg-slate-50 border border-slate-200 p-4 rounded-xl">
+            <div className="w-full flex justify-center bg-slate-100 border border-slate-200 p-4 rounded-xl">
               <BarChart width={680} height={230} data={barChartData} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
                 <XAxis dataKey="name" stroke="#475569" fontSize={11} tickLine={false} fontWeight="bold" />
                 <YAxis stroke="#475569" fontSize={11} domain={[0, 100]} />
@@ -597,7 +597,7 @@ export const Dashboard: React.FC<DashboardProps> = ({ evaluations, targetYearMon
                   const isFirst = award?.isFirstPlaceAward;
                   const isSecond = award?.isSecondPlaceAward;
                   return (
-                    <tr key={e.circleName} className={isFirst ? "bg-amber-50 font-semibold" : isSecond ? "bg-cyan-50 font-semibold" : "even:bg-slate-50"}>
+                    <tr key={e.circleName} className={isFirst ? "bg-amber-50 font-semibold" : isSecond ? "bg-cyan-50 font-semibold" : "even:bg-slate-100"}>
                       <td className="border border-slate-300 py-2 font-bold">{idx + 1}</td>
                       <td className="border border-slate-300 py-2 font-bold">{e.circleName}</td>
                       <td className="border border-slate-300 py-2">{e.scores.maintScore}</td>
@@ -607,7 +607,7 @@ export const Dashboard: React.FC<DashboardProps> = ({ evaluations, targetYearMon
                       <td className="border border-slate-300 py-2">{e.scores.themeGradeScore + e.scores.themeCumulativeScore}</td>
                       <td className="border border-slate-300 py-2">{e.scores.proposalScore}</td>
                       <td className="border border-slate-300 py-2">{e.scores.unreasonableCountScore + e.scores.unreasonableResolveScore}</td>
-                      <td className="border border-slate-300 py-2 font-black text-indigo-900 bg-indigo-50/50 text-sm">{e.scores.totalScore}</td>
+                      <td className="border border-slate-300 py-2 font-black text-indigo-900 bg-indigo-100 text-sm">{e.scores.totalScore}</td>
                     </tr>
                   );
                 })}
