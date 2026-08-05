@@ -793,16 +793,16 @@ export const Dashboard: React.FC<DashboardProps> = ({ evaluations, targetYearMon
               <table className="office-table">
                 <thead>
                   <tr>
-                    <th>순위</th>
-                    <th>분임조명</th>
-                    <th>3정 5S</th>
-                    <th>회합</th>
-                    <th>테마진행</th>
-                    <th>계획달성</th>
-                    <th>테마완료</th>
-                    <th>제안활동</th>
-                    <th>불합리적출</th>
-                    <th style={{ background: '#1e1b4b', color: '#fef08a' }}>총점</th>
+                    <th style={{ width: '6%' }}>순위</th>
+                    <th style={{ width: '11%' }}>분임조명</th>
+                    <th style={{ width: '10%' }}>3정 5S</th>
+                    <th style={{ width: '8%' }}>회합</th>
+                    <th style={{ width: '11%' }}>테마진행</th>
+                    <th style={{ width: '11%' }}>계획달성</th>
+                    <th style={{ width: '11%' }}>테마완료</th>
+                    <th style={{ width: '11%' }}>제안활동</th>
+                    <th style={{ width: '13%' }}>불합리적출</th>
+                    <th style={{ width: '8%', background: '#1e1b4b', color: '#fef08a' }}>총점</th>
                   </tr>
                 </thead>
                 <tbody>
