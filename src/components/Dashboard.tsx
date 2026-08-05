@@ -431,173 +431,228 @@ export const Dashboard: React.FC<DashboardProps> = ({ evaluations, targetYearMon
             </div>
           </div>
 
-          {/* 숨겨진 PDF용 보고서 템플릿 (인쇄에 최적화된 밝은 테마 및 고정 크기) */}
-          <div 
-            id="pdf-report-template" 
-            className="bg-[#ffffff] text-[#000000] px-10 pt-6 pb-12"
-            style={{ position: 'absolute', top: '-9999px', left: '-9999px', width: '794px', minHeight: '1123px' }}
-          >
-            <h1 className="text-3xl font-black text-center mb-6 border-b-2 border-[#000000] pb-4 text-[#000000]">
-              분임조 세부 평가 결과 보고서
-            </h1>
-
-            <div className="flex items-end justify-between mb-4">
+          {/* 세부 평가 팝업 인쇄용 숨김 템플릿 */}
+          {detailEval && (
+            <div 
+              id="pdf-report-template" 
+              className="bg-white text-slate-900 p-10 font-sans"
+              style={{ position: 'absolute', top: '-9999px', left: '-9999px', width: '794px', minHeight: '1123px' }}
+            >
+          <div className="border-4 border-slate-900 p-8 h-full">
+            {/* 오피스 스타일 헤더 */}
+            <div className="flex items-center justify-between border-b-2 border-slate-900 pb-4 mb-6">
               <div>
-                <h2 className="text-2xl font-bold text-[#1e293b]">{selectedDetailCircle} 분임조</h2>
-                <p className="text-[#475569] mt-1">{targetYearMonth} 기준 평가 내역</p>
+                <span className="text-xs font-bold uppercase tracking-widest text-indigo-700 bg-indigo-50 px-2.5 py-1 rounded">SAMYANG INNOCHEM QUALITY CIRCLE</span>
+                <h1 className="text-2xl font-black text-slate-900 mt-2 tracking-tight">분임조 세부 평가 결과 보고서</h1>
               </div>
-              <div className="text-3xl font-black text-[#4338ca]">
-                총점: {detailEval.scores.totalScore}점
+              <div className="text-right">
+                <span className="text-xs text-slate-500 font-semibold block">평가년월</span>
+                <span className="text-lg font-bold text-slate-800">{targetYearMonth}</span>
               </div>
             </div>
 
-            <div className="grid grid-cols-2 gap-8 mb-6">
+            {/* 분임조 요약 카드 */}
+            <div className="flex items-center justify-between bg-slate-900 text-white rounded-xl p-6 mb-6 shadow-md">
+              <div>
+                <div className="text-xs text-indigo-300 font-semibold uppercase tracking-wider">Target Circle</div>
+                <h2 className="text-3xl font-black mt-0.5 text-white">{selectedDetailCircle} 분임조</h2>
+              </div>
+              <div className="text-right">
+                <span className="text-xs text-slate-400 font-semibold block">종합 획득 점수</span>
+                <span className="text-4xl font-black text-amber-400">{detailEval.scores.totalScore} <span className="text-lg text-white">/ 100점</span></span>
+              </div>
+            </div>
+
+            <div className="grid grid-cols-2 gap-6 mb-6">
               {/* 레이더 차트 영역 */}
-              <div className="flex justify-center items-center bg-[#f8fafc] border border-[#cbd5e1] rounded-xl p-4">
-                <div className="w-[360px] h-[320px]">
-                  <RadarChart width={360} height={320} data={detailRadarData}>
+              <div className="bg-slate-50 border border-slate-200 rounded-xl p-4 flex flex-col items-center justify-center">
+                <h3 className="text-sm font-bold text-slate-700 mb-2">■ 영역별 밸런스 차트</h3>
+                <div className="w-[340px] h-[300px]">
+                  <RadarChart width={340} height={300} data={detailRadarData}>
                     <PolarGrid stroke="#cbd5e1" />
-                    <PolarAngleAxis dataKey="subject" stroke="#334155" fontSize={12} fontWeight="bold" />
-                    <PolarRadiusAxis angle={30} domain={[0, 25]} stroke="#94a3b8" fontSize={10} />
-                    <Radar name={selectedDetailCircle} dataKey="score" stroke="#4f46e5" fill="#6366f1" fillOpacity={0.4} isAnimationActive={false} />
+                    <PolarAngleAxis dataKey="subject" stroke="#1e293b" fontSize={11} fontWeight="bold" />
+                    <PolarRadiusAxis angle={30} domain={[0, 25]} stroke="#94a3b8" fontSize={9} />
+                    <Radar name={selectedDetailCircle} dataKey="score" stroke="#4f46e5" fill="#6366f1" fillOpacity={0.45} isAnimationActive={false} />
                   </RadarChart>
                 </div>
               </div>
 
-              {/* 점수 요약 */}
-              <div className="space-y-4">
-                <div className="border border-gray-300 rounded p-4">
-                  <h4 className="font-bold text-lg mb-2 text-[#000000]">1. 3정 5S (획득: {detailEval.scores.maintScore}점)</h4>
-                  <ul className="list-disc list-inside text-gray-700">
-                    <li>관할구역 불합리 발견: {detailEval.scores.maintDefectCount}건</li>
-                  </ul>
+              {/* 세부 점수 테이블 */}
+              <div className="space-y-3">
+                <div className="bg-amber-50/50 border border-amber-200 rounded-xl p-3.5">
+                  <div className="flex justify-between items-center mb-1">
+                    <h4 className="font-bold text-sm text-amber-900">1. 3정 5S</h4>
+                    <span className="text-sm font-black text-amber-600">{detailEval.scores.maintScore} / 20점</span>
+                  </div>
+                  <p className="text-xs text-slate-600">· 관할구역 불합리 발견: <b>{detailEval.scores.maintDefectCount}건</b></p>
                 </div>
-                <div className="border border-gray-300 rounded p-4">
-                  <h4 className="font-bold text-lg mb-2 text-[#000000]">2. 분임조 (획득: {
-                    detailEval.scores.meetingScore + 
-                    detailEval.scores.themeProgressScore + 
-                    detailEval.scores.planAchievementScore + 
-                    detailEval.scores.themeGradeScore + 
-                    detailEval.scores.themeCumulativeScore
-                  }점)</h4>
-                  <ul className="list-disc list-inside text-gray-700">
-                    <li>회합 횟수: {detailEval.scores.meetingCount}회</li>
-                    <li>계획 달성률: {detailEval.scores.planAchievementRate}%</li>
-                  </ul>
+
+                <div className="bg-cyan-50/50 border border-cyan-200 rounded-xl p-3.5">
+                  <div className="flex justify-between items-center mb-1">
+                    <h4 className="font-bold text-sm text-cyan-900">2. 분임조 활동</h4>
+                    <span className="text-sm font-black text-cyan-600">{
+                      detailEval.scores.meetingScore + 
+                      detailEval.scores.themeProgressScore + 
+                      detailEval.scores.planAchievementScore + 
+                      detailEval.scores.themeGradeScore + 
+                      detailEval.scores.themeCumulativeScore
+                    } / 40점</span>
+                  </div>
+                  <p className="text-xs text-slate-600">· 회합 횟수: <b>{detailEval.scores.meetingCount}회</b> | 계획 달성률: <b>{detailEval.scores.planAchievementRate}%</b></p>
+                  <p className="text-xs text-slate-600">· 테마 진행: <b>{detailEval.scores.prevThemeStep} ➔ {detailEval.scores.currThemeStep}</b></p>
+                </div>
+
+                <div className="bg-emerald-50/50 border border-emerald-200 rounded-xl p-3.5">
+                  <div className="flex justify-between items-center mb-1">
+                    <h4 className="font-bold text-sm text-emerald-900">3. 제안 및 개선</h4>
+                    <span className="text-sm font-black text-emerald-600">{
+                      detailEval.scores.proposalScore + 
+                      detailEval.scores.unreasonableCountScore + 
+                      detailEval.scores.unreasonableResolveScore
+                    } / 40점</span>
+                  </div>
+                  <p className="text-xs text-slate-600">· 제안 건수: <b>총 {detailEval.scores.totalProposalCount}건</b> (인당 {detailEval.scores.proposalPerPerson}건)</p>
+                  <p className="text-xs text-slate-600">· 불합리 적출: <b>{detailEval.scores.totalUnreasonableCount}건</b> | 해결률: <b>{detailEval.scores.unreasonableResolveRate}%</b></p>
                 </div>
               </div>
             </div>
-
-            {/* 항목별 세부 텍스트 */}
-            <div className="border border-gray-300 rounded p-4">
-              <h4 className="font-bold text-lg mb-2 text-[#000000]">3. 제안 (획득: {
-                detailEval.scores.proposalScore + 
-                detailEval.scores.unreasonableCountScore + 
-                detailEval.scores.unreasonableResolveScore
-              }점)</h4>
-              <ul className="list-disc list-inside text-gray-700">
-                <li>제안 건수: 총 {detailEval.scores.totalProposalCount}건 (인당 {detailEval.scores.proposalPerPerson}건)</li>
-                <li>불합리 해결률: {detailEval.scores.unreasonableResolveRate}%</li>
-              </ul>
-            </div>
             
-            <div className="mt-8 pt-4 border-t border-gray-400 text-center text-sm text-gray-500">
-              본 문서는 시스템을 통해 자동 생성된 분임조 평가 결과 보고서입니다.
+            <div className="mt-12 pt-4 border-t border-slate-300 flex justify-between items-center text-xs text-slate-400">
+              <span>삼양이노켐 품질분임조 평가위원회</span>
+              <span>본 보고서는 디지털 집계 시스템에서 검증되어 자동 발행되었습니다.</span>
             </div>
           </div>
         </div>
       )}
+    </div>
+  )}
 
-      {/* 월간 종합 보고서 (인쇄용 숨김 템플릿) */}
+      {/* 월간 종합 보고서 (인쇄용 오피스 리뉴얼 템플릿) */}
       <div 
         id="summary-pdf-template" 
-        className="bg-[#ffffff] text-[#000000] px-10 pt-8 pb-12"
+        className="bg-white text-slate-900 p-10 font-sans"
         style={{ position: 'absolute', top: '-9999px', left: '-9999px', width: '794px', minHeight: '1123px' }}
       >
-        <h1 className="text-3xl font-black text-center mb-6 border-b-2 border-[#000000] pb-4 text-[#000000]">
-          {targetYearMonth} 분임조 종합 평가 결과 보고서
-        </h1>
-
-        {/* 메인 막대 차트 */}
-        <div className="mb-6">
-          <h3 className="text-lg font-bold mb-3 text-[#000000]">■ 분임조별 종합 점수 비교</h3>
-          <div className="w-full flex justify-center bg-[#f9fafb] border border-[#e5e7eb] p-4 pt-6 rounded">
-            <BarChart width={700} height={250} data={barChartData} margin={{ top: 0, right: 10, left: -20, bottom: 0 }}>
-              <XAxis dataKey="name" stroke="#475569" fontSize={12} tickLine={false} />
-              <YAxis stroke="#475569" fontSize={12} domain={[0, 100]} />
-              <Bar dataKey="3정5S" stackId="a" fill="#f59e0b" isAnimationActive={false} />
-              <Bar dataKey="분임조" stackId="a" fill="#06b6d4" isAnimationActive={false} />
-              <Bar dataKey="제안" stackId="a" fill="#10b981" isAnimationActive={false} />
-            </BarChart>
+        <div className="border-4 border-slate-900 p-8 h-full">
+          {/* 기업 오피스 타이틀 헤더 */}
+          <div className="flex justify-between items-center border-b-2 border-slate-900 pb-4 mb-6">
+            <div>
+              <span className="text-xs font-bold uppercase tracking-widest text-indigo-700 bg-indigo-50 px-2.5 py-1 rounded">SAMYANG INNOCHEM OFFICIAL REPORT</span>
+              <h1 className="text-2xl font-black text-slate-900 mt-2 tracking-tight">
+                {targetYearMonth} 분임조 종합 평가 결의서
+              </h1>
+            </div>
+            <div className="text-right border-l-2 border-slate-200 pl-4">
+              <div className="text-xs text-slate-500 font-semibold">보고서 작성일</div>
+              <div className="text-sm font-bold text-slate-800">{new Date().toLocaleDateString('ko-KR')}</div>
+            </div>
           </div>
-          <div className="flex items-center justify-center space-x-6 mt-3 text-xs font-semibold text-[#4b5563]">
-            <div className="flex items-center space-x-2"><span className="w-3 h-3 bg-[#f59e0b] inline-block"/><span>3정 5S (20점)</span></div>
-            <div className="flex items-center space-x-2"><span className="w-3 h-3 bg-[#06b6d4] inline-block"/><span>분임조 (40점)</span></div>
-            <div className="flex items-center space-x-2"><span className="w-3 h-3 bg-[#10b981] inline-block"/><span>제안 (40점)</span></div>
-          </div>
-        </div>
 
-        {/* 종합 평가 점수 표 */}
-        <div className="mb-6">
-          <h3 className="text-lg font-bold mb-3 text-[#000000]">■ 분임조별 세부 평가 결과</h3>
-          <table className="w-full border-collapse border border-[#9ca3af] text-center text-sm">
-            <thead>
-              <tr className="bg-[#f3f4f6] font-bold text-[#1f2937]">
-                <td className="border border-[#9ca3af] py-2">순위</td>
-                <td className="border border-[#9ca3af] py-2">분임조명</td>
-                <td className="border border-[#9ca3af] py-2">3정 5S</td>
-                <td className="border border-[#9ca3af] py-2">회합</td>
-                <td className="border border-[#9ca3af] py-2">테마진행</td>
-                <td className="border border-[#9ca3af] py-2">계획달성</td>
-                <td className="border border-[#9ca3af] py-2">테마완료</td>
-                <td className="border border-[#9ca3af] py-2">제안활동</td>
-                <td className="border border-[#9ca3af] py-2">불합리적출</td>
-                <td className="border border-[#9ca3af] py-2 text-[#4338ca]">총점</td>
-              </tr>
-            </thead>
-            <tbody>
-              {sortedEvals.map((e, idx) => {
-                const award = awardStatuses.find(a => a.circleName === e.circleName);
-                const isFirst = award?.isFirstPlaceAward;
-                const isSecond = award?.isSecondPlaceAward;
-                return (
-                  <tr key={e.circleName} className={isFirst ? "bg-[#fffbeb]" : isSecond ? "bg-[#ecfeff]" : ""}>
-                    <td className="border border-[#9ca3af] py-2 font-bold">{idx + 1}</td>
-                    <td className="border border-[#9ca3af] py-2 font-bold">{e.circleName}</td>
-                    <td className="border border-[#9ca3af] py-2">{e.scores.maintScore}</td>
-                    <td className="border border-[#9ca3af] py-2">{e.scores.meetingScore}</td>
-                    <td className="border border-[#9ca3af] py-2">{e.scores.themeProgressScore}</td>
-                    <td className="border border-[#9ca3af] py-2">{e.scores.planAchievementScore}</td>
-                    <td className="border border-[#9ca3af] py-2">{e.scores.themeGradeScore + e.scores.themeCumulativeScore}</td>
-                    <td className="border border-[#9ca3af] py-2">{e.scores.proposalScore}</td>
-                    <td className="border border-[#9ca3af] py-2">{e.scores.unreasonableCountScore + e.scores.unreasonableResolveScore}</td>
-                    <td className="border border-[#9ca3af] py-2 font-black text-[#4338ca]">{e.scores.totalScore}</td>
-                  </tr>
-                );
-              })}
-            </tbody>
-          </table>
-        </div>
-
-        {/* 포상 내역 */}
-        <div>
-          <h3 className="text-lg font-bold mb-4 text-[#000000]">■ 포상 내역 종합</h3>
-          <div className="bg-[#f9fafb] border border-[#e5e7eb] rounded p-4 text-sm space-y-2 text-[#1f2937]">
-            {awardStatuses.find(a => a.isFirstPlaceAward) ? (
-              <div className="flex items-center space-x-2"><span className="font-bold text-[#d97706] w-24">[최우수 포상]</span> <span>{awardStatuses.find(a => a.isFirstPlaceAward)?.circleName} 분임조 (70점 이상 당월 최고점)</span></div>
-            ) : (
-              <div className="flex items-center space-x-2"><span className="font-bold text-[#6b7280] w-24">[최우수 포상]</span> <span>대상 분임조 없음 (조건 미달)</span></div>
-            )}
-            {awardStatuses.find(a => a.isSecondPlaceAward) ? (
-              <div className="flex items-center space-x-2"><span className="font-bold text-[#0891b2] w-24">[우수 포상]</span> <span>{awardStatuses.find(a => a.isSecondPlaceAward)?.circleName} 분임조 (80점 이상 당월 2등)</span></div>
-            ) : (
-              <div className="flex items-center space-x-2"><span className="font-bold text-[#6b7280] w-24">[우수 포상]</span> <span>대상 분임조 없음 (조건 미달)</span></div>
-            )}
+          {/* 메인 종합 막대 차트 */}
+          <div className="mb-6">
+            <h3 className="text-sm font-bold mb-2 text-slate-800 flex items-center space-x-1.5">
+              <span className="w-2 h-4 bg-indigo-600 rounded-sm inline-block"></span>
+              <span>1. 분임조별 종합 점수 비교 차트</span>
+            </h3>
+            <div className="w-full flex justify-center bg-slate-50 border border-slate-200 p-4 rounded-xl">
+              <BarChart width={680} height={230} data={barChartData} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
+                <XAxis dataKey="name" stroke="#475569" fontSize={11} tickLine={false} fontWeight="bold" />
+                <YAxis stroke="#475569" fontSize={11} domain={[0, 100]} />
+                <Bar dataKey="3정5S" stackId="a" fill="#f59e0b" isAnimationActive={false} />
+                <Bar dataKey="분임조" stackId="a" fill="#06b6d4" isAnimationActive={false} />
+                <Bar dataKey="제안" stackId="a" fill="#10b981" isAnimationActive={false} />
+              </BarChart>
+            </div>
+            <div className="flex items-center justify-center space-x-6 mt-2 text-xs font-semibold text-slate-600">
+              <div className="flex items-center space-x-1.5"><span className="w-3 h-3 bg-[#f59e0b] rounded-sm inline-block"/><span>3정 5S (20점)</span></div>
+              <div className="flex items-center space-x-1.5"><span className="w-3 h-3 bg-[#06b6d4] rounded-sm inline-block"/><span>분임조 (40점)</span></div>
+              <div className="flex items-center space-x-1.5"><span className="w-3 h-3 bg-[#10b981] rounded-sm inline-block"/><span>제안 (40점)</span></div>
+            </div>
           </div>
-        </div>
-        
-        <div className="mt-8 pt-4 border-t border-[#9ca3af] text-center text-sm text-[#6b7280]">
-          본 문서는 품질 분임조 평가 대시보드 시스템을 통해 자동 생성되었습니다.
+
+          {/* 종합 평가 점수 표 */}
+          <div className="mb-6">
+            <h3 className="text-sm font-bold mb-2 text-slate-800 flex items-center space-x-1.5">
+              <span className="w-2 h-4 bg-indigo-600 rounded-sm inline-block"></span>
+              <span>2. 분임조별 항목별 세부 집계표</span>
+            </h3>
+            <table className="w-full border-collapse border border-slate-300 text-center text-xs">
+              <thead>
+                <tr className="bg-slate-900 text-white font-bold">
+                  <th className="border border-slate-700 py-2">순위</th>
+                  <th className="border border-slate-700 py-2">분임조명</th>
+                  <th className="border border-slate-700 py-2">3정 5S</th>
+                  <th className="border border-slate-700 py-2">회합</th>
+                  <th className="border border-slate-700 py-2">테마진행</th>
+                  <th className="border border-slate-700 py-2">계획달성</th>
+                  <th className="border border-slate-700 py-2">테마완료</th>
+                  <th className="border border-slate-700 py-2">제안활동</th>
+                  <th className="border border-slate-700 py-2">불합리적출</th>
+                  <th className="border border-slate-700 py-2 bg-indigo-700 text-amber-300">총점</th>
+                </tr>
+              </thead>
+              <tbody>
+                {sortedEvals.map((e, idx) => {
+                  const award = awardStatuses.find(a => a.circleName === e.circleName);
+                  const isFirst = award?.isFirstPlaceAward;
+                  const isSecond = award?.isSecondPlaceAward;
+                  return (
+                    <tr key={e.circleName} className={isFirst ? "bg-amber-50 font-semibold" : isSecond ? "bg-cyan-50 font-semibold" : "even:bg-slate-50"}>
+                      <td className="border border-slate-300 py-2 font-bold">{idx + 1}</td>
+                      <td className="border border-slate-300 py-2 font-bold">{e.circleName}</td>
+                      <td className="border border-slate-300 py-2">{e.scores.maintScore}</td>
+                      <td className="border border-slate-300 py-2">{e.scores.meetingScore}</td>
+                      <td className="border border-slate-300 py-2">{e.scores.themeProgressScore}</td>
+                      <td className="border border-slate-300 py-2">{e.scores.planAchievementScore}</td>
+                      <td className="border border-slate-300 py-2">{e.scores.themeGradeScore + e.scores.themeCumulativeScore}</td>
+                      <td className="border border-slate-300 py-2">{e.scores.proposalScore}</td>
+                      <td className="border border-slate-300 py-2">{e.scores.unreasonableCountScore + e.scores.unreasonableResolveScore}</td>
+                      <td className="border border-slate-300 py-2 font-black text-indigo-900 bg-indigo-50/50 text-sm">{e.scores.totalScore}</td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
+          </div>
+
+          {/* 포상 결의 및 총평 */}
+          <div className="mb-6">
+            <h3 className="text-sm font-bold mb-2 text-slate-800 flex items-center space-x-1.5">
+              <span className="w-2 h-4 bg-indigo-600 rounded-sm inline-block"></span>
+              <span>3. 당월 포상 심의 결과</span>
+            </h3>
+            <div className="bg-slate-50 border border-slate-200 rounded-xl p-4 text-xs space-y-2 text-slate-800">
+              {awardStatuses.find(a => a.isFirstPlaceAward) ? (
+                <div className="flex items-center space-x-3">
+                  <span className="font-bold text-amber-700 bg-amber-100 px-2 py-0.5 rounded border border-amber-300">[최우수상]</span> 
+                  <span className="font-bold text-slate-900 text-sm">{awardStatuses.find(a => a.isFirstPlaceAward)?.circleName} 분임조</span>
+                  <span className="text-slate-500">(70점 이상 당월 최고 득점)</span>
+                </div>
+              ) : (
+                <div className="flex items-center space-x-3">
+                  <span className="font-bold text-slate-500 bg-slate-200 px-2 py-0.5 rounded">[최우수상]</span> 
+                  <span className="text-slate-500">당월 대상 분임조 없음 (기준 점수 미달)</span>
+                </div>
+              )}
+              {awardStatuses.find(a => a.isSecondPlaceAward) ? (
+                <div className="flex items-center space-x-3">
+                  <span className="font-bold text-cyan-700 bg-cyan-100 px-2 py-0.5 rounded border border-cyan-300">[우수상]</span> 
+                  <span className="font-bold text-slate-900 text-sm">{awardStatuses.find(a => a.isSecondPlaceAward)?.circleName} 분임조</span>
+                  <span className="text-slate-500">(80점 이상 당월 2위 달성 포상 대상)</span>
+                </div>
+              ) : (
+                <div className="flex items-center space-x-3">
+                  <span className="font-bold text-slate-500 bg-slate-200 px-2 py-0.5 rounded">[우수상]</span> 
+                  <span className="text-slate-500">당월 대상 분임조 없음 (기준 점수 미달)</span>
+                </div>
+              )}
+            </div>
+          </div>
+          
+          <div className="mt-10 pt-4 border-t border-slate-300 flex justify-between items-center text-xs text-slate-400">
+            <span>삼양이노켐 주식회사 환경기술팀</span>
+            <span>삼양이노켐 품질분임조 평가 및 집계 시스템 자동 생성 문서</span>
+          </div>
         </div>
       </div>
     </div>
