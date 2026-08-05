@@ -26,11 +26,11 @@ export const Dashboard: React.FC<DashboardProps> = ({ evaluations, targetYearMon
     }
     
     setIsSummaryPdfGenerating(true);
-    // html2canvas의 오프스크린 캡처 버그 방지를 위해 캡처 직전에만 요소를 화면 영역(z-index 후면)으로 이동
+    
+    // html2canvas의 oklch 미지원 오류 방지를 위해 임시 Polyfill 혹은 style 샌드박싱
     const originalStyle = element.style.cssText;
     element.style.cssText = 'position: fixed; top: 0px; left: 0px; width: 794px; z-index: -100; background: white;';
     
-    // 약간의 딜레이를 주어 DOM이 완전히 업데이트되도록 대기
     await new Promise(resolve => setTimeout(resolve, 300));
 
     try {
@@ -41,31 +41,33 @@ export const Dashboard: React.FC<DashboardProps> = ({ evaluations, targetYearMon
         scrollY: 0,
         logging: false,
         onclone: (clonedDoc: Document) => {
-          // html2canvas가 Tailwind v4의 전체 <style> 규칙 내 oklch()를 파싱하다가 발생시키는 오류 방지
-          const styleTags = clonedDoc.querySelectorAll('style');
-          styleTags.forEach((style: HTMLStyleElement) => {
-            if (style.innerHTML.includes('oklch')) {
-              // oklch 포함된 규칙 제거 또는 호환 가능 문자로 대체
-              style.innerHTML = style.innerHTML.replace(/oklch\([^)]+\)/g, '#6366f1');
-            }
+          // html2canvas parser가 돔 전체 <style> 및 <link> 내 oklch, lab, color-mix를 파싱할 때 에러가 발생함
+          // 따라서 clonedDoc에 존재하는 모든 <style> 및 <link rel="stylesheet"> 태그 내의 oklch(...) 표현식을 완전 제거/치환
+          const styleTags = clonedDoc.querySelectorAll('style, link[rel="stylesheet"]');
+          styleTags.forEach((style: any) => {
+            try {
+              if (style.innerHTML) {
+                style.innerHTML = style.innerHTML.replace(/oklch\([^)]+\)/g, '#26247B');
+              }
+            } catch (e) {}
           });
+
+          // styleSheets 객체 직접 조작
+          try {
+            Array.from(clonedDoc.styleSheets).forEach((sheet: any) => {
+              try {
+                Array.from(sheet.cssRules || []).forEach((rule: any) => {
+                  if (rule.cssText && rule.cssText.includes('oklch')) {
+                    rule.style.cssText = rule.style.cssText.replace(/oklch\([^)]+\)/g, '#26247B');
+                  }
+                });
+              } catch (e) {}
+            });
+          } catch (e) {}
           
           const clonedEl = clonedDoc.getElementById('summary-pdf-template');
           if (clonedEl) {
             clonedEl.style.fontFamily = 'sans-serif';
-            const allElements = clonedEl.querySelectorAll('*');
-            allElements.forEach((el: any) => {
-              const computed = window.getComputedStyle(el);
-              if (computed.backgroundColor && computed.backgroundColor.includes('oklch')) {
-                el.style.backgroundColor = '#ffffff';
-              }
-              if (computed.color && computed.color.includes('oklch')) {
-                el.style.color = '#000000';
-              }
-              if (computed.borderColor && computed.borderColor.includes('oklch')) {
-                el.style.borderColor = '#cbd5e1';
-              }
-            });
           }
         }
       } as any);
@@ -107,29 +109,30 @@ export const Dashboard: React.FC<DashboardProps> = ({ evaluations, targetYearMon
         scrollY: 0,
         logging: false,
         onclone: (clonedDoc: Document) => {
-          const styleTags = clonedDoc.querySelectorAll('style');
-          styleTags.forEach((style: HTMLStyleElement) => {
-            if (style.innerHTML.includes('oklch')) {
-              style.innerHTML = style.innerHTML.replace(/oklch\([^)]+\)/g, '#6366f1');
-            }
+          const styleTags = clonedDoc.querySelectorAll('style, link[rel="stylesheet"]');
+          styleTags.forEach((style: any) => {
+            try {
+              if (style.innerHTML) {
+                style.innerHTML = style.innerHTML.replace(/oklch\([^)]+\)/g, '#26247B');
+              }
+            } catch (e) {}
           });
-          
+
+          try {
+            Array.from(clonedDoc.styleSheets).forEach((sheet: any) => {
+              try {
+                Array.from(sheet.cssRules || []).forEach((rule: any) => {
+                  if (rule.cssText && rule.cssText.includes('oklch')) {
+                    rule.style.cssText = rule.style.cssText.replace(/oklch\([^)]+\)/g, '#26247B');
+                  }
+                });
+              } catch (e) {}
+            });
+          } catch (e) {}
+
           const clonedEl = clonedDoc.getElementById('pdf-report-template');
           if (clonedEl) {
             clonedEl.style.fontFamily = 'sans-serif';
-            const allElements = clonedEl.querySelectorAll('*');
-            allElements.forEach((el: any) => {
-              const computed = window.getComputedStyle(el);
-              if (computed.backgroundColor && computed.backgroundColor.includes('oklch')) {
-                el.style.backgroundColor = '#ffffff';
-              }
-              if (computed.color && computed.color.includes('oklch')) {
-                el.style.color = '#000000';
-              }
-              if (computed.borderColor && computed.borderColor.includes('oklch')) {
-                el.style.borderColor = '#cbd5e1';
-              }
-            });
           }
         }
       } as any);
