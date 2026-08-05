@@ -26,60 +26,64 @@ export const Dashboard: React.FC<DashboardProps> = ({ evaluations, targetYearMon
     }
     
     setIsSummaryPdfGenerating(true);
-    
-    // html2canvas의 oklch 미지원 오류 방지를 위해 임시 Polyfill 혹은 style 샌드박싱
-    const originalStyle = element.style.cssText;
-    element.style.cssText = 'position: fixed; top: 0px; left: 0px; width: 794px; z-index: -100; background: white;';
-    
+
+    // oklch() 색상이 포함된 메인 앱 CSS 영향을 받지 않도록 독립된 깨끗한 iframe 생성
+    const iframe = document.createElement('iframe');
+    iframe.style.position = 'fixed';
+    iframe.style.left = '-9999px';
+    iframe.style.top = '-9999px';
+    iframe.style.width = '794px';
+    iframe.style.height = '1123px';
+    document.body.appendChild(iframe);
+
+    const iframeDoc = iframe.contentWindow?.document;
+    if (!iframeDoc) {
+      document.body.removeChild(iframe);
+      setIsSummaryPdfGenerating(false);
+      return;
+    }
+
+    // 표준 inline style만 포함된 인쇄용 HTML 작성
+    iframeDoc.open();
+    iframeDoc.write(`
+      <!DOCTYPE html>
+      <html>
+        <head>
+          <meta charset="utf-8" />
+          <style>
+            * { box-sizing: border-box; margin: 0; padding: 0; font-family: sans-serif; }
+            body { background: #ffffff; color: #000000; padding: 20px; }
+            .border-box { border: 3px solid #1e293b; padding: 20px; }
+            .header-bar { display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #1e293b; padding-bottom: 15px; margin-bottom: 20px; }
+            .badge { background: #e0e7ff; color: #26247b; font-weight: bold; padding: 4px 8px; border-radius: 4px; font-size: 12px; }
+            .title { font-size: 22px; font-weight: bold; margin-top: 5px; color: #0f172a; }
+            .table { width: 100%; border-collapse: collapse; margin-top: 15px; text-align: center; font-size: 12px; }
+            .table th { background: #0f172a; color: #ffffff; border: 1px solid #334155; padding: 8px; }
+            .table td { border: 1px solid #cbd5e1; padding: 8px; }
+            .award-box { background: #f8fafc; border: 1px solid #e2e8f0; padding: 15px; border-radius: 8px; margin-top: 15px; font-size: 13px; }
+          </style>
+        </head>
+        <body>
+          ${element.innerHTML}
+        </body>
+      </html>
+    `);
+    iframeDoc.close();
+
     await new Promise(resolve => setTimeout(resolve, 300));
 
     try {
-      const canvas = await html2canvas(element, { 
+      const canvas = await html2canvas(iframeDoc.body, { 
         scale: 2, 
         useCORS: true, 
         backgroundColor: '#ffffff',
-        scrollY: 0,
-        logging: false,
-        onclone: (clonedDoc: Document) => {
-          // html2canvas parser가 돔 전체 <style> 및 <link> 내 oklch, lab, color-mix를 파싱할 때 에러가 발생함
-          // 따라서 clonedDoc에 존재하는 모든 <style> 및 <link rel="stylesheet"> 태그 내의 oklch(...) 표현식을 완전 제거/치환
-          const styleTags = clonedDoc.querySelectorAll('style, link[rel="stylesheet"]');
-          styleTags.forEach((style: any) => {
-            try {
-              if (style.innerHTML) {
-                style.innerHTML = style.innerHTML.replace(/oklch\([^)]+\)/g, '#26247B');
-              }
-            } catch (e) {}
-          });
-
-          // styleSheets 객체 직접 조작
-          try {
-            Array.from(clonedDoc.styleSheets).forEach((sheet: any) => {
-              try {
-                Array.from(sheet.cssRules || []).forEach((rule: any) => {
-                  if (rule.cssText && rule.cssText.includes('oklch')) {
-                    rule.style.cssText = rule.style.cssText.replace(/oklch\([^)]+\)/g, '#26247B');
-                  }
-                });
-              } catch (e) {}
-            });
-          } catch (e) {}
-          
-          const clonedEl = clonedDoc.getElementById('summary-pdf-template');
-          if (clonedEl) {
-            clonedEl.style.fontFamily = 'sans-serif';
-          }
-        }
-      } as any);
+        logging: false
+      });
       const imgData = canvas.toDataURL('image/png');
       
       const pdf = new jsPDF('p', 'mm', 'a4');
       const pdfWidth = pdf.internal.pageSize.getWidth();
       const pdfHeight = (canvas.height * pdfWidth) / canvas.width;
-      
-      if (!canvas.width || !canvas.height) {
-        throw new Error("캡처된 캔버스의 크기가 0입니다.");
-      }
 
       pdf.addImage(imgData, 'PNG', 0, 0, pdfWidth, pdfHeight);
       pdf.save(`월간_종합_평가_보고서_${targetYearMonth}.pdf`);
@@ -87,7 +91,7 @@ export const Dashboard: React.FC<DashboardProps> = ({ evaluations, targetYearMon
       console.error('PDF 다운로드 실패:', err);
       alert(`PDF 생성 중 오류가 발생했습니다: ${err?.message || err}`);
     } finally {
-      element.style.cssText = originalStyle;
+      document.body.removeChild(iframe);
       setIsSummaryPdfGenerating(false);
     }
   };
@@ -97,54 +101,57 @@ export const Dashboard: React.FC<DashboardProps> = ({ evaluations, targetYearMon
     if (!element) return;
     
     setIsPdfGenerating(true);
-    const originalStyle = element.style.cssText;
-    element.style.cssText = 'position: fixed; top: 0px; left: 0px; width: 794px; z-index: -100; background: white;';
+
+    const iframe = document.createElement('iframe');
+    iframe.style.position = 'fixed';
+    iframe.style.left = '-9999px';
+    iframe.style.top = '-9999px';
+    iframe.style.width = '794px';
+    iframe.style.height = '1123px';
+    document.body.appendChild(iframe);
+
+    const iframeDoc = iframe.contentWindow?.document;
+    if (!iframeDoc) {
+      document.body.removeChild(iframe);
+      setIsPdfGenerating(false);
+      return;
+    }
+
+    iframeDoc.open();
+    iframeDoc.write(`
+      <!DOCTYPE html>
+      <html>
+        <head>
+          <meta charset="utf-8" />
+          <style>
+            * { box-sizing: border-box; margin: 0; padding: 0; font-family: sans-serif; }
+            body { background: #ffffff; color: #000000; padding: 20px; }
+            .border-box { border: 3px solid #1e293b; padding: 20px; }
+            .badge { background: #e0e7ff; color: #26247b; font-weight: bold; padding: 4px 8px; border-radius: 4px; font-size: 12px; }
+            .title { font-size: 22px; font-weight: bold; margin-top: 5px; color: #0f172a; }
+          </style>
+        </head>
+        <body>
+          ${element.innerHTML}
+        </body>
+      </html>
+    `);
+    iframeDoc.close();
+
     await new Promise(resolve => setTimeout(resolve, 300));
 
     try {
-      const canvas = await html2canvas(element, { 
+      const canvas = await html2canvas(iframeDoc.body, { 
         scale: 2, 
         useCORS: true, 
         backgroundColor: '#ffffff',
-        scrollY: 0,
-        logging: false,
-        onclone: (clonedDoc: Document) => {
-          const styleTags = clonedDoc.querySelectorAll('style, link[rel="stylesheet"]');
-          styleTags.forEach((style: any) => {
-            try {
-              if (style.innerHTML) {
-                style.innerHTML = style.innerHTML.replace(/oklch\([^)]+\)/g, '#26247B');
-              }
-            } catch (e) {}
-          });
-
-          try {
-            Array.from(clonedDoc.styleSheets).forEach((sheet: any) => {
-              try {
-                Array.from(sheet.cssRules || []).forEach((rule: any) => {
-                  if (rule.cssText && rule.cssText.includes('oklch')) {
-                    rule.style.cssText = rule.style.cssText.replace(/oklch\([^)]+\)/g, '#26247B');
-                  }
-                });
-              } catch (e) {}
-            });
-          } catch (e) {}
-
-          const clonedEl = clonedDoc.getElementById('pdf-report-template');
-          if (clonedEl) {
-            clonedEl.style.fontFamily = 'sans-serif';
-          }
-        }
-      } as any);
+        logging: false
+      });
       const imgData = canvas.toDataURL('image/png');
       
       const pdf = new jsPDF('p', 'mm', 'a4');
       const pdfWidth = pdf.internal.pageSize.getWidth();
       const pdfHeight = (canvas.height * pdfWidth) / canvas.width;
-      
-      if (!canvas.width || !canvas.height) {
-        throw new Error("캡처된 캔버스의 크기가 0입니다.");
-      }
 
       pdf.addImage(imgData, 'PNG', 0, 0, pdfWidth, pdfHeight);
       pdf.save(`분임조_평가_보고서_${selectedDetailCircle}_${targetYearMonth}.pdf`);
@@ -152,7 +159,9 @@ export const Dashboard: React.FC<DashboardProps> = ({ evaluations, targetYearMon
       console.error('PDF 다운로드 실패:', err);
       alert(`PDF 생성 중 오류가 발생했습니다: ${err?.message || err}`);
     } finally {
-      element.style.cssText = originalStyle;
+      if (document.body.contains(iframe)) {
+        document.body.removeChild(iframe);
+      }
       setIsPdfGenerating(false);
     }
   };
